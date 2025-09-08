@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+    product-base-web:  
+        image: httpd:2.4
+        container_name: product-base-web
+        volumes:
+            - ./.docker/ProductBase/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+            - ./ProductBase/public:/app/public
+            - ./ProductBase/storage/app/public:/app/storage/app/public
+        ports:
+            - "127.0.0.1:80:80"
+        hostname: product-base.loc
+        networks:
+            - testos
+        depends_on:
+            - product-base-app
+    product-base-app:
+        build: ./.docker/ProductBase
+        container_name: product-base-app
+        volumes:
+            - ./ProductBase:/app:rw
+        networks:
+            - testos
+        depends_on:
+            - db
+        working_dir: /app
+
+    db:
+        image: postgres:17.6
+        restart: always
+        container_name: testos-db
+        hostname: testos-db
+        environment:
+            POSTGRES_PASSWORD: secret
+        ports:
+            -   "127.0.0.1:5432:5432"
+        networks:
+            - testos
+
+networks:
+    testos:
+        external: true
