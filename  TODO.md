@@ -2,10 +2,11 @@ Architecture
 [*] UI diagram
 
 Product Base
-[] DB model
-[] Api
-[] Unit test
-[] Browser test
+[*] DB model
+[*] Api
+[*] Browser test
+[] Postmen
+[] Bulk upsert
 
 Notification
 [] DB model

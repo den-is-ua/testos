@@ -103,4 +103,61 @@ class ProductController extends Controller
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully']);
     }
+
+    /**
+     * Upsert products (update if exists, create if not). Handles an array of products.
+     */
+    public function upsert(Request $request)
+    {
+        try {
+            // Validate the incoming array of products
+            $validatedData = $request->validate([
+                '*.sku' => 'required|string|max:255|unique:products,sku', // SKU is required for each product
+                '*.name' => 'required|string|max:255',
+                '*.price' => 'required|numeric',
+                '*.category' => 'nullable|string|max:255',
+                '*.description' => 'nullable|string',
+                '*.images' => 'nullable|array',
+                '*.images.*' => 'url', // Validate each image URL if provided
+            ]);
+
+            $results = [];
+            $createdCount = 0;
+            $updatedCount = 0;
+
+            foreach ($validatedData as $productData) {
+                // Find product by SKU
+                $product = Product::where('sku', $productData['sku'])->first();
+
+                if ($product) {
+                    // Product exists, update it
+                    $product->update($productData);
+                    $results[] = $product;
+                    $updatedCount++;
+                } else {
+                    // Product does not exist, create it
+                    $product = Product::create($productData);
+                    $results[] = $product;
+                    $createdCount++;
+                }
+            }
+
+            return response()->json([
+                'message' => "Upsert operation completed. {$createdCount} created, {$updatedCount} updated.",
+                'data' => $results
+            ], 200);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Catch any other unexpected errors
+            return response()->json([
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

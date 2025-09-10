@@ -12,3 +12,8 @@ nano /etc/hosts
 # 127.0.0.1 product-base.loc
 ```
 
+# ProductBase
+### Testing
+```
+docker exec -it product-base-app php artisan test
+```
