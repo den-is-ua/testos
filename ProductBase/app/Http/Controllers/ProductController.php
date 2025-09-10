@@ -2,50 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\UpsertProductsRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB; // Added for DB::transaction
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $products = Product::all();
         return response()->json($products);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'sku' => 'required|string|max:255|unique:products',
-                'price' => 'required|numeric',
-                'category' => 'nullable|string|max:255',
-                'description' => 'nullable|string',
-                'images' => 'nullable|array',
-                'images.*' => 'url', // Validate each image URL if provided
-            ]);
+        $validatedData = $request->validated();
 
-            $product = Product::create($validatedData);
-            return response()->json($product, 201);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'message' => 'Validation Error',
-                'errors' => $e->errors(),
-            ], 422);
-        }
+        $product = Product::create($validatedData);
+        return response()->json($product, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $product = Product::find($id);
@@ -57,10 +37,7 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateProductRequest $request, string $id)
     {
         $product = Product::find($id);
 
@@ -68,30 +45,12 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        try {
-            $validatedData = $request->validate([
-                'name' => 'sometimes|required|string|max:255',
-                'sku' => 'sometimes|required|string|max:255|unique:products,sku,' . $id,
-                'price' => 'sometimes|required|numeric',
-                'category' => 'nullable|string|max:255',
-                'description' => 'nullable|string',
-                'images' => 'nullable|array',
-                'images.*' => 'url', // Validate each image URL if provided
-            ]);
+        $validatedData = $request->validated();
 
-            $product->update($validatedData);
-            return response()->json($product);
-        } catch (ValidationException $e) {
-            return response()->json([
-                'message' => 'Validation Error',
-                'errors' => $e->errors(),
-            ], 422);
-        }
+        $product->update($validatedData);
+        return response()->json($product);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $product = Product::find($id);
@@ -104,25 +63,11 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product deleted successfully']);
     }
 
-    public function upsert(Request $request)
+    public function upsert(UpsertProductsRequest $request)
     {
-        $input = $request->has('products') ? $request->input('products') : $request->all();
+        $validatedData = $request->validated()['products']; // Use validated data directly
 
-        $validated = validator(
-            ['products' => $input],
-            [
-                'products' => 'required|array|min:1',
-                'products.*.sku' => 'required|string|max:255|distinct', // prevents duplicates inside the same request
-                'products.*.name' => 'required|string|max:255',
-                'products.*.price' => 'required|numeric',
-                'products.*.category' => 'nullable|string|max:255',
-                'products.*.description' => 'nullable|string',
-                'products.*.images' => 'nullable|array',
-                'products.*.images.*' => 'url',
-            ]
-        )->validate()['products'];
-
-        $skus = collect($validated)->pluck('sku')->all();
+        $skus = collect($validatedData)->pluck('sku')->all();
         $existingSkus = \App\Models\Product::query()
             ->whereIn('sku', $skus)
             ->pluck('sku')
@@ -134,7 +79,7 @@ class ProductController extends Controller
 
         $now = now();
 
-        $rows = collect($validated)->map(function ($p) use ($now) {
+        $rows = collect($validatedData)->map(function ($p) use ($now) {
             return [
                 'sku'         => $p['sku'],
                 'name'        => $p['name'],
