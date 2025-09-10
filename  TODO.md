@@ -6,7 +6,7 @@ Product Base
 [*] Api
 [*] Browser test
 [] Postmen
-[] Bulk upsert
+[*] Bulk upsert
 
 Notification
 [] DB model

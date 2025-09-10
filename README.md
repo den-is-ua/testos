@@ -13,6 +13,11 @@ nano /etc/hosts
 ```
 
 # ProductBase
+### Go under docker container
+```
+docker exec -it product-base-app bash
+```
+
 ### Testing
 ```
 docker exec -it product-base-app php artisan test
