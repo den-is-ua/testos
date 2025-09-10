@@ -15,7 +15,5 @@ use App\Http\Controllers\ProductController;
 |
 */
 
+Route::post('products/upsert', [ProductController::class, 'upsert']);
 Route::resource('products', ProductController::class);
-
-// Custom route for upserting products
-Route::post('/products/upsert', [ProductController::class, 'upsert']);

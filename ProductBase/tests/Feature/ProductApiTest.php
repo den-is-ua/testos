@@ -146,4 +146,210 @@ class ProductApiTest extends TestCase
         $response->assertStatus(422)
                  ->assertJsonValidationErrors(['name', 'price']);
     }
+
+    /** @test */
+    public function it_can_upsert_new_products()
+    {
+        $productsToUpsert = [
+            [
+                'sku' => $this->faker->unique()->ean13,
+                'name' => $this->faker->word,
+                'price' => $this->faker->randomFloat(2, 10, 1000),
+                'category' => $this->faker->word,
+                'description' => $this->faker->paragraph,
+                'images' => [$this->faker->imageUrl(), $this->faker->imageUrl()],
+            ],
+            [
+                'sku' => $this->faker->unique()->ean13,
+                'name' => $this->faker->word,
+                'price' => $this->faker->randomFloat(2, 10, 1000),
+                'category' => $this->faker->word,
+                'description' => $this->faker->paragraph,
+                'images' => [$this->faker->imageUrl()],
+            ],
+        ];
+
+        $response = $this->postJson('/api/products/upsert', ['products' => $productsToUpsert]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Upsert completed: 2 created, 0 updated.',
+            'meta' => [
+                'total' => 2,
+                'created' => 2,
+                'updated' => 0,
+            ],
+            'data' => [
+                'affected_skus' => array_column($productsToUpsert, 'sku'),
+            ],
+        ]);
+
+        // Assert that products are in the database
+        foreach ($productsToUpsert as $productData) {
+            $this->assertDatabaseHas('products', ['sku' => $productData['sku'], 'name' => $productData['name']]);
+        }
+    }
+
+    /** @test */
+    public function it_can_upsert_existing_products()
+    {
+        // Create some initial products
+        $existingProducts = Product::factory()->count(2)->create([
+            'name' => 'Original Name',
+            'price' => 100.00,
+        ]);
+
+        $productsToUpsert = [
+            [
+                'sku' => $existingProducts[0]->sku, // Existing SKU
+                'name' => 'Updated Name 1',
+                'price' => 150.00,
+                'category' => 'New Category 1',
+                'description' => 'Updated description 1',
+                'images' => [$this->faker->imageUrl()],
+            ],
+            [
+                'sku' => $existingProducts[1]->sku, // Existing SKU
+                'name' => 'Updated Name 2',
+                'price' => 200.00,
+                'category' => 'New Category 2',
+                'description' => 'Updated description 2',
+                'images' => [$this->faker->imageUrl(), $this->faker->imageUrl()],
+            ],
+        ];
+
+        $response = $this->postJson('/api/products/upsert', ['products' => $productsToUpsert]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Upsert completed: 0 created, 2 updated.',
+            'meta' => [
+                'total' => 2,
+                'created' => 0,
+                'updated' => 2,
+            ],
+            'data' => [
+                'affected_skus' => array_column($productsToUpsert, 'sku'),
+            ],
+        ]);
+
+        // Assert that products are updated in the database
+        foreach ($productsToUpsert as $productData) {
+            $this->assertDatabaseHas('products', ['sku' => $productData['sku'], 'name' => $productData['name'], 'price' => $productData['price']]);
+        }
+    }
+
+    /** @test */
+    public function it_can_upsert_mixed_new_and_existing_products()
+    {
+        // Create some initial products
+        $existingProduct = Product::factory()->create([
+            'name' => 'Existing Product Name',
+            'price' => 50.00,
+        ]);
+
+        $productsToUpsert = [
+            // Existing product
+            [
+                'sku' => $existingProduct->sku,
+                'name' => 'Updated Existing Product Name',
+                'price' => 75.00,
+            ],
+            // New product
+            [
+                'sku' => $this->faker->unique()->ean13,
+                'name' => $this->faker->word,
+                'price' => $this->faker->randomFloat(2, 10, 1000),
+            ],
+        ];
+
+        $response = $this->postJson('/api/products/upsert', ['products' => $productsToUpsert]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Upsert completed: 1 created, 1 updated.',
+            'meta' => [
+                'total' => 2,
+                'created' => 1,
+                'updated' => 1,
+            ],
+            'data' => [
+                'affected_skus' => array_column($productsToUpsert, 'sku'),
+            ],
+        ]);
+
+        // Assert that the existing product is updated
+        $this->assertDatabaseHas('products', [
+            'sku' => $existingProduct->sku,
+            'name' => 'Updated Existing Product Name',
+            'price' => 75.00,
+        ]);
+
+        // Assert that the new product is created
+        $this->assertDatabaseHas('products', [
+            'sku' => $productsToUpsert[1]['sku'],
+            'name' => $productsToUpsert[1]['name'],
+            'price' => $productsToUpsert[1]['price'],
+        ]);
+    }
+
+    /** @test */
+    public function it_fails_to_upsert_with_missing_required_fields()
+    {
+        $productsToUpsert = [
+            // Missing name and price
+            [
+                'sku' => $this->faker->unique()->ean13,
+            ],
+            // Missing sku
+            [
+                'name' => $this->faker->word,
+                'price' => $this->faker->randomFloat(2, 10, 1000),
+            ],
+        ];
+
+        $response = $this->postJson('/api/products/upsert', ['products' => $productsToUpsert]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([
+            'products.0.name',
+            'products.0.price',
+            'products.1.sku',
+        ]);
+    }
+
+    /** @test */
+    public function it_fails_to_upsert_with_duplicate_skus_in_request()
+    {
+        $sku = $this->faker->unique()->ean13;
+
+        $productsToUpsert = [
+            [
+                'sku' => $sku,
+                'name' => $this->faker->word,
+                'price' => $this->faker->randomFloat(2, 10, 1000),
+            ],
+            [
+                'sku' => $sku, // Duplicate SKU
+                'name' => $this->faker->word,
+                'price' => $this->faker->randomFloat(2, 10, 1000),
+            ],
+        ];
+
+        $response = $this->postJson('/api/products/upsert', ['products' => $productsToUpsert]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['products.1.sku']);
+    }
+
+    /** @test */
+    public function it_fails_to_upsert_with_missing_products_key()
+    {
+        $response = $this->postJson('/api/products/upsert', []); // Missing 'products' key
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([
+            'products',
+        ]);
+    }
 }
