@@ -6,9 +6,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\UpsertProductsRequest;
 use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB; // Added for DB::transaction
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
