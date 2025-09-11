@@ -13,7 +13,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return response()->json($products);
+        return response()->json(['success' => true, 'message' => '', 'data' => $products]);
     }
 
     public function store(StoreProductRequest $request)
@@ -21,7 +21,7 @@ class ProductController extends Controller
         $validatedData = $request->validated();
 
         $product = Product::create($validatedData);
-        return response()->json($product, 201);
+        return response()->json(['success' => true, 'message' => '', 'data' => $product], 201);
     }
 
     public function show(string $id)
@@ -29,10 +29,10 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Product not found', 'data' => null], 404);
         }
 
-        return response()->json($product);
+        return response()->json(['success' => true, 'message' => '', 'data' => $product]);
     }
 
     public function update(UpdateProductRequest $request, string $id)
@@ -40,13 +40,13 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Product not found', 'data' => null], 404);
         }
 
         $validatedData = $request->validated();
 
         $product->update($validatedData);
-        return response()->json($product);
+        return response()->json(['success' => true, 'message' => '', 'data' => $product]);
     }
 
     public function destroy(string $id)
@@ -54,11 +54,11 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+            return response()->json(['success' => false, 'message' => 'Product not found', 'data' => null], 404);
         }
 
         $product->delete();
-        return response()->json(['message' => 'Product deleted successfully']);
+        return response()->json(['success' => true, 'message' => 'Product deleted successfully', 'data' => null]);
     }
 
     public function upsert(UpsertProductsRequest $request)
@@ -100,13 +100,14 @@ class ProductController extends Controller
         });
 
         return response()->json([
+            'success' => true,
             'message' => "Upsert completed: {$createdCount} created, {$updatedCount} updated.",
-            'meta' => [
-                'total'   => count($skus),
-                'created' => $createdCount,
-                'updated' => $updatedCount,
-            ],
             'data' => [
+                'meta' => [
+                    'total'   => count($skus),
+                    'created' => $createdCount,
+                    'updated' => $updatedCount,
+                ],
                 'affected_skus' => $skus,
             ],
         ], 200);
