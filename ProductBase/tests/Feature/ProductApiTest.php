@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\TestCase;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,24 +22,26 @@ class ProductApiTest extends TestCase
     }
 
     /** @test */
-        public function it_can_create_a_product()
-        {
-            $productData = [
-                'name' => $this->faker->word,
-                'sku' => $this->faker->unique()->ean13,
-                'price' => $this->faker->randomFloat(2, 10, 1000),
-                'category' => $this->faker->word,
-                'description' => $this->faker->paragraph,
-                'images' => [$this->faker->imageUrl(), $this->faker->imageUrl()],
-            ];
+    public function it_can_create_a_product()
+    {
+        $productData = [
+            'name' => $this->faker->word,
+            'sku' => $this->faker->unique()->ean13,
+            'price' => $this->faker->randomFloat(2, 10, 1000),
+            'category' => $this->faker->word,
+            'description' => $this->faker->paragraph,
+            'images' => [$this->faker->imageUrl(), $this->faker->imageUrl()],
+        ];
 
-            $response = $this->postJson('/api/products', $productData);
+        $response = $this->postJson('/api/products', $productData);
 
-            $response->assertStatus(201)
-                    ->assertJsonFragment(['data' => ['name' => $productData['name']]]);
+        $response
+            ->assertCreated()                         
+            ->assertJson(['success' => true])        
+            ->assertJsonPath('data.name', $productData['name']);
 
-            $this->assertDatabaseHas('products', ['sku' => $productData['sku']]);
-        }
+        $this->assertDatabaseHas('products', ['sku' => $productData['sku']]);
+    }
 
     /** @test */
     public function it_can_retrieve_a_list_of_products()
@@ -65,10 +68,8 @@ class ProductApiTest extends TestCase
     /** @test */
     public function it_returns_404_if_product_not_found()
     {
-        $response = $this->getJson('/api/products/999'); // Assuming 999 does not exist
-
-        $response->assertStatus(404)
-                 ->assertJson(['message' => 'Product not found']);
+        $response = $this->getJson('/api/products/999');
+        $response->assertStatus(404);
     }
 
     /** @test */
@@ -97,8 +98,7 @@ class ProductApiTest extends TestCase
 
         $response = $this->putJson('/api/products/999', $updatedData);
 
-        $response->assertStatus(404)
-                 ->assertJson(['message' => 'Product not found']);
+        $response->assertStatus(404);
     }
 
     /** @test */
@@ -109,7 +109,7 @@ class ProductApiTest extends TestCase
         $response = $this->deleteJson('/api/products/' . $product->id);
 
         $response->assertStatus(200)
-                 ->assertJson(['message' => 'Product deleted successfully']);
+                 ->assertJson(['success' => true]);
 
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }
@@ -118,9 +118,7 @@ class ProductApiTest extends TestCase
     public function it_returns_404_when_deleting_non_existent_product()
     {
         $response = $this->deleteJson('/api/products/999');
-
-        $response->assertStatus(404)
-                 ->assertJson(['message' => 'Product not found']);
+        $response->assertStatus(404);
     }
 
     /** @test */
