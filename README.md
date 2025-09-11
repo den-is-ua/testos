@@ -12,6 +12,10 @@ nano /etc/hosts
 # 127.0.0.1 product-base.loc
 ```
 
+# Postman api collection
+Download the dump file and import to Postman
+[File](.postman/TestOS.postman_collection.json)
+
 # ProductBase
 ### Go under docker container
 ```
