@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexProductRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\UpsertProductsRequest;
+use App\Http\Resources\ProductCollection;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(IndexProductRequest $request)
     {
-        $products = Product::all();
-        return response()->json(['success' => true, 'message' => '', 'data' => $products]);
+        $products = Product::paginate(
+            perPage: $request->integer('per_page', 15)
+        );
+
+        return new ProductCollection($products);
     }
 
     public function store(StoreProductRequest $request)
