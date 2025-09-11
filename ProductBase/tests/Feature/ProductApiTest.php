@@ -35,7 +35,7 @@ class ProductApiTest extends TestCase
             $response = $this->postJson('/api/products', $productData);
 
             $response->assertStatus(201)
-                    ->assertJsonFragment(['name' => $productData['name']]);
+                    ->assertJsonFragment(['data' => ['name' => $productData['name']]]);
 
             $this->assertDatabaseHas('products', ['sku' => $productData['sku']]);
         }
@@ -48,7 +48,7 @@ class ProductApiTest extends TestCase
         $response = $this->getJson('/api/products');
 
         $response->assertStatus(200)
-                 ->assertJsonCount(3);
+                 ->assertJsonCount(3, 'data');
     }
 
     /** @test */

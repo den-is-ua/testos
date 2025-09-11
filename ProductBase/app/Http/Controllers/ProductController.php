@@ -27,44 +27,34 @@ class ProductController extends Controller
         $validatedData = $request->validated();
 
         $product = Product::create($validatedData);
-        return response()->json(['success' => true, 'message' => '', 'data' => $product], 201);
+        return response()->json([
+            'success' => true, 
+            'data' => new ProductResource($product)
+        ], 201);
     }
 
-    public function show(string $id)
+    public function show(Product $product)
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json(['success' => false, 'message' => 'Product not found', 'data' => null], 404);
-        }
-
-        return response()->json(['success' => true, 'message' => '', 'data' => $product]);
+        return response()->json([
+            'success' => true, 
+            'data' => new ProductResource($product)
+        ]);
     }
 
-    public function update(UpdateProductRequest $request, string $id)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json(['success' => false, 'message' => 'Product not found', 'data' => null], 404);
-        }
-
         $validatedData = $request->validated();
-
         $product->update($validatedData);
-        return response()->json(['success' => true, 'message' => '', 'data' => $product]);
+        return response()->json([
+            'success' => true, 
+            'data' => new ProductResource($product)
+        ]);
     }
 
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json(['success' => false, 'message' => 'Product not found', 'data' => null], 404);
-        }
-
         $product->delete();
-        return response()->json(['success' => true, 'message' => 'Product deleted successfully', 'data' => null]);
+        return response()->json(['success' => true]);
     }
 
     public function upsert(UpsertProductsRequest $request)
@@ -108,12 +98,12 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => "Upsert completed: {$createdCount} created, {$updatedCount} updated.",
+            'meta' => [
+                'total'   => count($skus),
+                'created' => $createdCount,
+                'updated' => $updatedCount,
+            ],
             'data' => [
-                'meta' => [
-                    'total'   => count($skus),
-                    'created' => $createdCount,
-                    'updated' => $updatedCount,
-                ],
                 'affected_skus' => $skus,
             ],
         ], 200);
