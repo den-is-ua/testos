@@ -5,14 +5,8 @@ Product Base
 [*] DB model
 [*] Api
 [*] Browser test
-[] Postmen
+[*] Postmen
 [*] Bulk upsert
-
-Notification
-[] DB model
-[] Api
-[] Unit test
-[] Browser test
 
 Import
 [] DB model
