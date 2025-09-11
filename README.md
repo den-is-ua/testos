@@ -10,6 +10,7 @@ nano /etc/hosts
 
 # Insert
 # 127.0.0.1 product-base.loc
+# 127.0.0.1 import.loc
 ```
 
 # Postman api collection

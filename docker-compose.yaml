@@ -25,6 +25,31 @@ services:
             - db
         working_dir: /app
 
+    import-web:  
+        image: httpd:2.4
+        container_name: import-web
+        volumes:
+            - ./.docker/Import/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+            - ./Import/public:/app/public
+            - ./Import/storage/app/public:/app/storage/app/public
+        ports:
+            - "127.0.0.1:81:80"
+        hostname: import.loc
+        networks:
+            - testos
+        depends_on:
+            - import-app
+    import-app:
+        build: ./.docker/Import
+        container_name: import-app
+        volumes:
+            - ./Import:/app:rw
+        networks:
+            - testos
+        depends_on:
+            - db
+        working_dir: /app
+
     db:
         image: postgres:17.6
         restart: always
