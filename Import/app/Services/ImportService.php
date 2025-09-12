@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Import;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -12,8 +13,9 @@ class ImportService
     public static function store(UploadedFile $file)
     {
         $path = $file->store('imports');
-        $fullPath = storage_path('app/' . $path);
-        $hash = file_exists($fullPath) ? hash_file('sha256', $fullPath) : null;
+        $disk = config('filesystems.default');
+        $content = Storage::disk($disk)->get($path);
+        $hash = hash('sha256', $content);
 
         return Import::create([
             'file_name' => $file->getClientOriginalName(),
