@@ -15,7 +15,7 @@ RUN apt-get update && \
     php -r "unlink('composer-setup.php');" && \
     mv composer.phar /usr/local/bin/composer && \
     chmod +x /usr/local/bin/install-php-extensions && \
-    install-php-extensions pdo_pgsql pgsql zip igbinary xhprof
+    install-php-extensions pdo_pgsql pgsql zip igbinary xhprof sockets
 
 
 RUN groupadd -g $uid dev
