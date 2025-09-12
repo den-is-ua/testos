@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('providers', function (Blueprint $table) {
+        Schema::create('imports', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('file_url')->nullable();
+            $table->string('file_name');
+            $table->string('file_path');
+            $table->string('file_extension', 4);
+            $table->string('hash_content', 64)->index();
             $table->json('settings')->nullable();
+            $table->tinyInteger('progress')->default(0);
+            $table->timestamp('import_completed_at')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('providers');
+        Schema::dropIfExists('imports');
     }
 };

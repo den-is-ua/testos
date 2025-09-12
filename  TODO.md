@@ -9,7 +9,7 @@ Product Base
 [*] Bulk upsert
 
 Import
-[] DB model
+[*] DB model
 [] Api
 [] Unit test
 [] Browser test
