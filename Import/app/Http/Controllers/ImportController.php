@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreImportRequest;
+use App\Jobs\SetupImportSettingsByAIJob;
 use App\Services\ImportService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +16,8 @@ class ImportController extends Controller
     {
         $file = $request->file('file');
         
-        ImportService::store($file);
+        $import = ImportService::store($file);
+        SetupImportSettingsByAIJob::dispatch($import);
 
         return response()->json([
             'success' => true

@@ -27,3 +27,7 @@ docker exec -it product-base-app bash
 ```
 docker exec -it product-base-app php artisan test
 ```
+
+# Import
+Setup `GEMINI_API_KEY` in the `.env` file
+[Get an api key](https://aistudio.google.com/app/apikey)
