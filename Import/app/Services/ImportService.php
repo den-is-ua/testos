@@ -24,4 +24,24 @@ class ImportService
             'hash_content' => $hash
         ]);
     }
+
+    public static function setupSettingsByGemini(Import $import)
+    {
+        
+    }
+
+    public static function defineAndParse()
+    {
+
+    }
+
+    public static function parseCSV()
+    {
+
+    }
+
+    public static function parseXML()
+    {
+        
+    }
 }
