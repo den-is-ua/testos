@@ -30,9 +30,9 @@ class CSVParserService implements ParserContract
         int $nameColumnPosition, 
         int $skuColumnPosition,
         int $priceColumnPosition,
-        int $categoryColumnPosition,
-        int $descriptionColumnPosition,
-        int $imageColumnPosition    
+        ?int $categoryColumnPosition,
+        ?int $descriptionColumnPosition,
+        ?int $imageColumnPosition    
     ) {
         $this->import->settings = [
             self::START_ROW_SETTING_NAME                    => $startRow,
