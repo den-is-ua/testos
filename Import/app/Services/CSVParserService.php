@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Contracts\ParserContract;
 use App\Models\Import;
+use Exception;
 
 
 
@@ -18,6 +19,9 @@ class CSVParserService implements ParserContract
     const CATEGORY_COLUMN_POSITION_SETTIG_NAME = 'category_column_position';
     const DESCRIPTION_COLUMN_POSITION_SETTING_NAME = 'description_column_position';
     const IMAGES_COLUMN_POSITION_SETTING_NAME = 'images_column_position';
+    const SEPARATOR_SETTING_NAME = 'separator';
+    const ENDCLOUSURE_SETTING_NAME = 'endclosure';
+    const ESCAPE_SETTING_NAME = 'escape';
 
 
     public function __construct(private Import $import)
@@ -32,7 +36,10 @@ class CSVParserService implements ParserContract
         int $priceColumnPosition,
         ?int $categoryColumnPosition,
         ?int $descriptionColumnPosition,
-        ?int $imageColumnPosition    
+        ?int $imageColumnPosition,
+        string $separator = ',',
+        string $endclosure = '"',
+        string $escape = '\\', 
     ) {
         $this->import->settings = [
             self::START_ROW_SETTING_NAME                    => $startRow,
@@ -41,44 +48,49 @@ class CSVParserService implements ParserContract
             self::PRICE_COLUMN_POSITION_SETTING_NAME        => $priceColumnPosition,
             self::CATEGORY_COLUMN_POSITION_SETTIG_NAME      => $categoryColumnPosition,
             self::DESCRIPTION_COLUMN_POSITION_SETTING_NAME  => $descriptionColumnPosition,
-            self::IMAGES_COLUMN_POSITION_SETTING_NAME       => $imageColumnPosition
+            self::IMAGES_COLUMN_POSITION_SETTING_NAME       => $imageColumnPosition,
+            self::SEPARATOR_SETTING_NAME                    => $separator,
+            self::ENDCLOUSURE_SETTING_NAME                  => $endclosure,
+            self::ESCAPE_SETTING_NAME                       => $escape
         ];
         $this->import->save();
     }
 
     public function parse(): array
     {
-        $settings = $this->import->settings ?? [];
-
-        $startRow = isset($settings[self::START_ROW_SETTING_NAME]) ? (int)$settings[self::START_ROW_SETTING_NAME] : 1;
-
-        $namePos = array_key_exists(self::NAME_COLUMN_POSITION_SETTING_NAME, $settings) ? $settings[self::NAME_COLUMN_POSITION_SETTING_NAME] : null;
-        $skuPos = array_key_exists(self::SKU_COLUMN_POSITION_SETTING_NAME, $settings) ? $settings[self::SKU_COLUMN_POSITION_SETTING_NAME] : null;
-        $pricePos = array_key_exists(self::PRICE_COLUMN_POSITION_SETTING_NAME, $settings) ? $settings[self::PRICE_COLUMN_POSITION_SETTING_NAME] : null;
-        $categoryPos = array_key_exists(self::CATEGORY_COLUMN_POSITION_SETTIG_NAME, $settings) ? $settings[self::CATEGORY_COLUMN_POSITION_SETTIG_NAME] : null;
-        $descriptionPos = array_key_exists(self::DESCRIPTION_COLUMN_POSITION_SETTING_NAME, $settings) ? $settings[self::DESCRIPTION_COLUMN_POSITION_SETTING_NAME] : null;
-        $imagesPos = array_key_exists(self::IMAGES_COLUMN_POSITION_SETTING_NAME, $settings) ? $settings[self::IMAGES_COLUMN_POSITION_SETTING_NAME] : null;
-
-        $filePath = $this->import->file_path ?? null;
-        if (!$filePath) {
-            return [];
+        if (empty($this->import->settings)) {
+            throw new Exception('Need to setup settings before parsing!');
         }
 
-        $fullPath = storage_path('app/' . ltrim($filePath, '/'));
+        $settings = $this->import->settings;
+
+        $startRow = $settings[self::START_ROW_SETTING_NAME] ?? 1;
+
+        $namePos = $settings[self::NAME_COLUMN_POSITION_SETTING_NAME];
+        $skuPos = $settings[self::SKU_COLUMN_POSITION_SETTING_NAME];
+        $pricePos = $settings[self::PRICE_COLUMN_POSITION_SETTING_NAME];
+        $categoryPos = $settings[self::CATEGORY_COLUMN_POSITION_SETTIG_NAME] ?? null;
+        $descriptionPos = $settings[self::DESCRIPTION_COLUMN_POSITION_SETTING_NAME] ?? null;
+        $imagesPos = $settings[self::IMAGES_COLUMN_POSITION_SETTING_NAME] ?? null;
+
+        $fullPath = storage_path('app/' . ltrim($this->import->file_path, '/'));
 
         if (!file_exists($fullPath) || !is_readable($fullPath)) {
-            return [];
+            throw new Exception('Import file doesnt exists!');
         }
 
         $handle = fopen($fullPath, 'r');
         if ($handle === false) {
-            return [];
+            throw new Exception('Import file cant be read!');
         }
 
         $products = [];
         $rowIndex = 0;
+        $separator = $settings[self::SEPARATOR_SETTING_NAME];
+        $endclousure = $settings[self::ENDCLOUSURE_SETTING_NAME];
+        $escape = $settings[self::ESCAPE_SETTING_NAME];
 
-        while (($row = fgetcsv($handle)) !== false) {
+        while (($row = fgetcsv($handle, null, $separator, $endclousure, $escape )) !== false) {
             $rowIndex++;
 
             if ($rowIndex < $startRow) {
