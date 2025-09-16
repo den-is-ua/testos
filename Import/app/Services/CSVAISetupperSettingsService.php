@@ -6,9 +6,11 @@ namespace App\Services;
 
 use App\Contracts\AISetupperSettingsContract;
 use App\Models\Import;
+use Gemini\Data\Blob;
 use Gemini\Data\UploadedFile;
 use Gemini\Enums\MimeType;
 use Gemini\Laravel\Facades\Gemini;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -43,15 +45,17 @@ class CSVAISetupperSettingsService implements AISetupperSettingsContract
                 $endclosure                     => string,
                 $escape                         => string
             ]
-        EOL>>
+        EOL;
 
         $result = Gemini::generativeModel(model: 'gemini-2.0-flash')
             ->generateContent([
                 'What is this video?',
-                new UploadedFile(
-                    fileUri: $import->file_path,
+                new Blob(
+                    data: base64_encode(Storage::get($import->file_path)),
                     mimeType: MimeType::TEXT_CSV
                 )
             ]);
+
+        dd($result);
     }
 }

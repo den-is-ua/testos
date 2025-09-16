@@ -11,18 +11,6 @@ use App\Models\Import;
 
 class CSVParserServiceTest extends TestCase
 {
-    use RefreshDatabase;
-
-
-    protected function makeStoragePath(string $relative): string
-    {
-        $fullDir = storage_path('app/' . dirname($relative));
-        if (!is_dir($fullDir)) {
-            mkdir($fullDir, 0777, true);
-        }
-        return storage_path('app/' . ltrim($relative, '/'));
-    }
-
     public function test_parse_reads_csv_and_splits_images_and_respects_start_row()
     {
         $relative = 'tests/csvparser/start_row_images.csv';

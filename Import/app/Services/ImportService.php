@@ -12,9 +12,8 @@ class ImportService
 {
     public static function store(UploadedFile $file)
     {
-        $path = $file->store('imports');
-        $disk = config('filesystems.default');
-        $content = Storage::disk($disk)->get($path);
+        $path = $file->store();
+        $content = Storage::get($path);
         $hash = hash('sha256', $content);
 
         return Import::create([
