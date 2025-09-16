@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Contracts\AISetupperSettingsContract;
 use App\Models\Import;
 use Gemini\Data\UploadedFile;
+use Gemini\Enums\MimeType;
 use Gemini\Laravel\Facades\Gemini;
 
 
@@ -22,6 +23,9 @@ class CSVAISetupperSettingsService implements AISetupperSettingsContract
         $categoryColumnPosition = CSVParserService::CATEGORY_COLUMN_POSITION_SETTIG_NAME;
         $descriptionColumnPosition = CSVParserService::DESCRIPTION_COLUMN_POSITION_SETTING_NAME;
         $imagesColumnPosition = CSVParserService::IMAGES_COLUMN_POSITION_SETTING_NAME;
+        $separator = CSVParserService::SEPARATOR_SETTING_NAME;
+        $endclosure = CSVParserService::ENDCLOUSURE_SETTING_NAME;
+        $escape = CSVParserService::ESCAPE_SETTING_NAME;
 
         $prompt = <<<EOL
             Generate php array map for settings for parse csv file.
@@ -34,7 +38,10 @@ class CSVAISetupperSettingsService implements AISetupperSettingsContract
                 $priceColumnPosition            => int,
                 $categoryColumnPosition         => ?int,
                 $descriptionColumnPosition      => ?int,
-                $imagesColumnPosition           => ?int
+                $imagesColumnPosition           => ?int,
+                $separator                      => string,
+                $endclosure                     => string,
+                $escape                         => string
             ]
         EOL>>
 
@@ -43,7 +50,7 @@ class CSVAISetupperSettingsService implements AISetupperSettingsContract
                 'What is this video?',
                 new UploadedFile(
                     fileUri: $import->file_path,
-                    mimeType: $import->file_extension
+                    mimeType: MimeType::TEXT_CSV
                 )
             ]);
     }
