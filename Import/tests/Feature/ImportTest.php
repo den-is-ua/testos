@@ -26,7 +26,7 @@ class ImportTest extends TestCase
         $response->assertStatus(201)->assertJson(['success' => true]);
 
         // Assert file exists in storage
-        Storage::disk('local')->assertExists('imports/' . $file->hashName());
+        Storage::disk('local')->assertExists($file->hashName());
 
         // Assert database has import record
         $this->assertDatabaseHas('imports', [

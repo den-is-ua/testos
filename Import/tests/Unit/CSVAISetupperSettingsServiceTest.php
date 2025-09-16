@@ -6,6 +6,7 @@ namespace Tests\Unit;
 
 use App\Models\Import;
 use App\Services\CSVAISetupperSettingsService;
+use App\Services\CSVParserService;
 use App\Services\ImportService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -45,6 +46,17 @@ class CSVAISetupperSettingsServiceTest extends TestCase
         $ai = new CSVAISetupperSettingsService();
         $ai->setupSettings($import);
 
-        // assertions...
+        $this->assertEquals([
+            CSVParserService::START_ROW_SETTING_NAME => 2,
+            CSVParserService::NAME_COLUMN_POSITION_SETTING_NAME => 1,
+            CSVParserService::SKU_COLUMN_POSITION_SETTING_NAME => 2,
+            CSVParserService::PRICE_COLUMN_POSITION_SETTING_NAME => 3,
+            CSVParserService::CATEGORY_COLUMN_POSITION_SETTIG_NAME => 4,
+            CSVParserService::DESCRIPTION_COLUMN_POSITION_SETTING_NAME => 5,
+            CSVParserService::IMAGES_COLUMN_POSITION_SETTING_NAME => 6,
+            CSVParserService::SEPARATOR_SETTING_NAME => ',',
+            CSVParserService::ENDCLOUSURE_SETTING_NAME => '"',
+            CSVParserService::ESCAPE_SETTING_NAME => '\\',
+        ], $import->settings);
     }   
 }

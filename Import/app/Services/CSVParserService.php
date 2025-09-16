@@ -12,13 +12,13 @@ use Exception;
 
 class CSVParserService implements ParserContract
 {
-    const START_ROW_SETTING_NAME = 'start_row';
-    const NAME_COLUMN_POSITION_SETTING_NAME = 'name_column_position';
-    const SKU_COLUMN_POSITION_SETTING_NAME = 'sku_column_position';
-    const PRICE_COLUMN_POSITION_SETTING_NAME = 'price_column_position';
-    const CATEGORY_COLUMN_POSITION_SETTIG_NAME = 'category_column_position';
-    const DESCRIPTION_COLUMN_POSITION_SETTING_NAME = 'description_column_position';
-    const IMAGES_COLUMN_POSITION_SETTING_NAME = 'images_column_position';
+    const START_ROW_SETTING_NAME = 'startRow';
+    const NAME_COLUMN_POSITION_SETTING_NAME = 'nameColumnPosition';
+    const SKU_COLUMN_POSITION_SETTING_NAME = 'skuColumnPosition';
+    const PRICE_COLUMN_POSITION_SETTING_NAME = 'priceColumnPosition';
+    const CATEGORY_COLUMN_POSITION_SETTIG_NAME = 'categoryColumnPosition';
+    const DESCRIPTION_COLUMN_POSITION_SETTING_NAME = 'descriptionColumnPosition';
+    const IMAGES_COLUMN_POSITION_SETTING_NAME = 'imagesColumnPosition';
     const SEPARATOR_SETTING_NAME = 'separator';
     const ENDCLOUSURE_SETTING_NAME = 'endclosure';
     const ESCAPE_SETTING_NAME = 'escape';
@@ -36,7 +36,7 @@ class CSVParserService implements ParserContract
         int $priceColumnPosition,
         ?int $categoryColumnPosition,
         ?int $descriptionColumnPosition,
-        ?int $imageColumnPosition,
+        ?int $imagesColumnPosition,
         string $separator = ',',
         string $endclosure = '"',
         string $escape = '\\', 
@@ -48,7 +48,7 @@ class CSVParserService implements ParserContract
             self::PRICE_COLUMN_POSITION_SETTING_NAME        => $priceColumnPosition,
             self::CATEGORY_COLUMN_POSITION_SETTIG_NAME      => $categoryColumnPosition,
             self::DESCRIPTION_COLUMN_POSITION_SETTING_NAME  => $descriptionColumnPosition,
-            self::IMAGES_COLUMN_POSITION_SETTING_NAME       => $imageColumnPosition,
+            self::IMAGES_COLUMN_POSITION_SETTING_NAME       => $imagesColumnPosition,
             self::SEPARATOR_SETTING_NAME                    => $separator,
             self::ENDCLOUSURE_SETTING_NAME                  => $endclosure,
             self::ESCAPE_SETTING_NAME                       => $escape
