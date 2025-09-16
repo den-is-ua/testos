@@ -17,7 +17,7 @@ class ImportController extends Controller
         $file = $request->file('file');
         
         $import = ImportService::store($file);
-        SetupImportSettingsByAIJob::dispatch($import);
+        SetupImportSettingsByAIJob::dispatch($import->id);
 
         return response()->json([
             'success' => true

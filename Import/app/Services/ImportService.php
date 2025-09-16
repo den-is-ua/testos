@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Contracts\AISetupperSettingsContract;
+use App\Contracts\ParserContract;
 use App\Models\Import;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +12,16 @@ use Illuminate\Support\Facades\Storage;
 
 class ImportService  
 {
+    private ParserContract $parser;
+    private AISetupperSettingsContract $AISetupperSettings;
+
+
+    public function __construct(private Import $import)
+    {
+        $this->parser = $this->parserMap();
+        $this->AISetupperSettings = $this->AISetupperSettingsMap();
+    }
+
     public static function store(UploadedFile $file)
     {
         $path = $file->store();
@@ -24,23 +36,27 @@ class ImportService
         ]);
     }
 
-    public static function setupSettingsByGemini(Import $import)
+    public function setupSettingsByGemini()
     {
-        
+        $this->AISetupperSettings->setupSettings($this->import);
     }
 
-    public static function defineAndParse()
+    public function parse()
     {
-
+        $this->parser->parse();
     }
 
-    public static function parseCSV()
+    private function parserMap(): ParserContract
     {
-
+        return [
+            'csv' => new CSVParserService($this->import)
+        ][$this->import->file_extension];
     }
 
-    public static function parseXML()
+    private function AISetupperSettingsMap(): AISetupperSettingsContract
     {
-        
+        return [
+            'csv' => new CSVAISetupperSettingsService()
+        ][$this->import->file_extension];
     }
 }

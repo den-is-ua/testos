@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SetupImportSettingsByAIJob;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -16,12 +18,15 @@ class ImportTest extends TestCase
     public function test_store_endpoint_stores_file_and_creates_import()
     {
         Storage::fake('local');
+        Queue::fake();
 
         $file = UploadedFile::fake()->create('test.csv', 10, 'text/csv');
 
         $response = $this->postJson('/api/imports', [
             'file' => $file,
         ]);
+
+        Queue::assertPushed(SetupImportSettingsByAIJob::class);
 
         $response->assertStatus(201)->assertJson(['success' => true]);
 
