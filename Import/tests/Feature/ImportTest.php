@@ -43,6 +43,7 @@ class ImportTest extends TestCase
     public function test_store_endpoint_rejects_duplicate_in_progress_hash()
     {
         Storage::fake('local');
+        Queue::fake();
 
         $file = UploadedFile::fake()->create('duplicate.csv', 10, 'text/csv');
 
@@ -55,9 +56,7 @@ class ImportTest extends TestCase
             'file_path' => 'imports/' . $file->hashName(),
             'file_extension' => 'csv',
             'hash_content' => $hash,
-            'settings' => [],
-            'progress' => 0,
-            'import_completed_at' => null,
+            'settings' => []
         ]);
 
         $response = $this->postJson('/api/imports', [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\OV\ProductOV;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Services\CSVParserService;
@@ -45,16 +46,16 @@ class CSVParserServiceTest extends TestCase
         // Only the third row should be parsed due to start_row = 3
         $this->assertCount(1, $products);
 
-        $expected = [
-            'name' => 'Product Two',
-            'sku' => 'P2',
-            'price' => '20.00',
-            'category' => 'Cat B',
-            'description' => 'Desc two',
-            'images' => ['http://img3.jpg', 'http://img4.jpg'],
-        ];
+        $expected = new ProductOV(
+            'Product Two',
+            'P2',
+            20.00,
+            'Cat B',
+            'Desc two',
+            ['http://img3.jpg', 'http://img4.jpg']
+        );
 
-        $this->assertSame($expected, $products[0]);
+        $this->assertEquals($expected, $products[0]);
 
         // cleanup
         @unlink($fullPath);

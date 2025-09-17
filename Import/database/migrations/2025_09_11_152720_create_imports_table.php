@@ -18,8 +18,9 @@ return new class extends Migration
             $table->string('file_extension', 4);
             $table->string('hash_content', 64)->index();
             $table->json('settings')->nullable();
-            $table->tinyInteger('progress')->default(0);
-            $table->timestamp('import_completed_at')->nullable();
+            $table->tinyInteger('total_iterations')->unsigned()->default(0);
+            $table->tinyInteger('confirmed_iterations')->unsigned()->default(0);
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });
     }

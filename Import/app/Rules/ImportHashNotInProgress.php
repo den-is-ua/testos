@@ -12,7 +12,7 @@ class ImportHashNotInProgress implements Rule
         $realPath = $value->getRealPath();
         $hash = hash_file('sha256', $realPath);
 
-        return !Import::where('hash_content', $hash)->whereNull('import_completed_at')->exists();
+        return !Import::where('hash_content', $hash)->whereNull('completed_at')->exists();
     }
 
     public function message(): string

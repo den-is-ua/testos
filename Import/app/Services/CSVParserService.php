@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Contracts\ParserContract;
 use App\Models\Import;
+use App\OV\ProductOV;
 use Exception;
 
 
@@ -116,14 +117,14 @@ class CSVParserService implements ParserContract
                     $images = array_values(array_filter(array_map('trim', $parts), fn($v) => $v !== ''));
                 }
 
-                $buffer[] = [
-                    'name' => $getValue($namePos),
-                    'sku' => $getValue($skuPos),
-                    'price' => $getValue($pricePos),
-                    'category' => $getValue($categoryPos),
-                    'description' => $getValue($descriptionPos),
-                    'images' => $images,
-                ];
+                $buffer[] = new ProductOV(
+                    $getValue($namePos),
+                    $getValue($skuPos),
+                    (float)$getValue($pricePos),
+                    $getValue($categoryPos),
+                    $getValue($descriptionPos),
+                    $images,
+                );
 
                 if (count($buffer) >= $chunkSize) {
                     yield $buffer;

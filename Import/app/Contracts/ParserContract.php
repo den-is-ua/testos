@@ -8,5 +8,9 @@ namespace App\Contracts;
 
 interface ParserContract 
 {
+    /**
+     * Summary of parse
+     * @return \App\OV\ProductOV[]
+     */
     public function parse(): iterable;
 }
