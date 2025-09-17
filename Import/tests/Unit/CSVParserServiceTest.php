@@ -6,6 +6,8 @@ namespace Tests\Unit;
 
 use App\OV\ProductOV;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Pest\Support\Str;
 use Tests\TestCase;
 use App\Services\CSVParserService;
 use App\Models\Import;
@@ -14,8 +16,8 @@ class CSVParserServiceTest extends TestCase
 {
     public function test_parse_reads_csv_and_splits_images_and_respects_start_row()
     {
-        $relative = 'tests/csvparser/start_row_images.csv';
-        $fullPath = $this->makeStoragePath($relative);
+        $relative = Str::random() . '.csv';
+        $fullPath = Storage::path($relative);
 
         $csv = [
             ['name_header', 'sku_header', 'price_header', 'category_header', 'description_header', 'images_header'],
@@ -58,6 +60,7 @@ class CSVParserServiceTest extends TestCase
         $this->assertEquals($expected, $products[0]);
 
         // cleanup
+        Storage::delete($relative);
         @unlink($fullPath);
     }
 }

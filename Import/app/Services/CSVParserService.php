@@ -8,6 +8,7 @@ use App\Contracts\ParserContract;
 use App\Models\Import;
 use App\OV\ProductOV;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -74,7 +75,7 @@ class CSVParserService implements ParserContract
         $descriptionPos = $settings[self::DESCRIPTION_COLUMN_POSITION_SETTING_NAME] ?? null;
         $imagesPos = $settings[self::IMAGES_COLUMN_POSITION_SETTING_NAME] ?? null;
 
-        $fullPath = storage_path('app/' . ltrim($this->import->file_path, '/'));
+        $fullPath = Storage::path($this->import->file_path);
 
         if (!file_exists($fullPath) || !is_readable($fullPath)) {
             throw new Exception('Import file doesnt exists!');

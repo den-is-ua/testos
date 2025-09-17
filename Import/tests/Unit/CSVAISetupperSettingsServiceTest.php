@@ -58,5 +58,7 @@ class CSVAISetupperSettingsServiceTest extends TestCase
             CSVParserService::ENDCLOUSURE_SETTING_NAME => '"',
             CSVParserService::ESCAPE_SETTING_NAME => '\\',
         ], $import->settings);
+
+        Storage::delete($path);
     }   
 }
