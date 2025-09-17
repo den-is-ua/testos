@@ -171,15 +171,12 @@ class ProductApiTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJson([
-            'message' => 'Upsert completed: 2 created, 0 updated.',
-            'meta' => [
-                'total' => 2,
-                'created' => 2,
-                'updated' => 0,
-            ],
+            'message' => 'Upsert completed',
             'data' => [
-                'affected_skus' => array_column($productsToUpsert, 'sku'),
-            ],
+                'total' => 2,
+                'createdCount' => 2,
+                'updatedCount' => 0,
+            ]
         ]);
 
         // Assert that products are in the database
@@ -220,15 +217,12 @@ class ProductApiTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJson([
-            'message' => 'Upsert completed: 0 created, 2 updated.',
-            'meta' => [
-                'total' => 2,
-                'created' => 0,
-                'updated' => 2,
-            ],
+            'message' => 'Upsert completed',
             'data' => [
-                'affected_skus' => array_column($productsToUpsert, 'sku'),
-            ],
+                'total' => 2,
+                'createdCount' => 0,
+                'updatedCount' => 2,
+            ]
         ]);
 
         // Assert that products are updated in the database
@@ -265,15 +259,12 @@ class ProductApiTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJson([
-            'message' => 'Upsert completed: 1 created, 1 updated.',
-            'meta' => [
-                'total' => 2,
-                'created' => 1,
-                'updated' => 1,
-            ],
+            'message' => 'Upsert completed',
             'data' => [
-                'affected_skus' => array_column($productsToUpsert, 'sku'),
-            ],
+                'total' => 2,
+                'createdCount' => 1,
+                'updatedCount' => 1,
+            ]
         ]);
 
         // Assert that the existing product is updated
