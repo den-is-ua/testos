@@ -8,5 +8,5 @@ namespace App\Contracts;
 
 interface ParserContract 
 {
-    public function parse(): array;
+    public function parse(): iterable;
 }

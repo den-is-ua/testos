@@ -56,7 +56,7 @@ class CSVParserService implements ParserContract
         $this->import->save();
     }
 
-    public function parse(): array
+    public function parse(): iterable
     {
         if (empty($this->import->settings)) {
             throw new Exception('Need to setup settings before parsing!');
@@ -84,48 +84,58 @@ class CSVParserService implements ParserContract
             throw new Exception('Import file cant be read!');
         }
 
-        $products = [];
+        $buffer = [];
         $rowIndex = 0;
         $separator = $settings[self::SEPARATOR_SETTING_NAME];
         $endclousure = $settings[self::ENDCLOUSURE_SETTING_NAME];
         $escape = $settings[self::ESCAPE_SETTING_NAME];
+        $chunkSize = 100;
 
-        while (($row = fgetcsv($handle, null, $separator, $endclousure, $escape )) !== false) {
-            $rowIndex++;
+        try {
+            while (($row = fgetcsv($handle, null, $separator, $endclousure, $escape )) !== false) {
+                $rowIndex++;
 
-            if ($rowIndex < $startRow) {
-                continue;
-            }
-
-            $getValue = function ($pos) use ($row) {
-                if ($pos === null || $pos === '') {
-                    return null;
+                if ($rowIndex < $startRow) {
+                    continue;
                 }
-                $pos = (int)$pos;
-                return array_key_exists($pos, $row) ? $row[$pos] : null;
-            };
 
-            $rawImages = $getValue($imagesPos);
+                $getValue = function ($pos) use ($row) {
+                    if ($pos === null || $pos === '') {
+                        return null;
+                    }
+                    $pos = (int)$pos;
+                    return array_key_exists($pos, $row) ? $row[$pos] : null;
+                };
 
-            $images = [];
-            if ($rawImages !== null && $rawImages !== '') {
-                // support comma or semicolon separated image lists
-                $parts = preg_split('/[,;]+/', (string)$rawImages);
-                $images = array_values(array_filter(array_map('trim', $parts), fn($v) => $v !== ''));
+                $rawImages = $getValue($imagesPos);
+
+                $images = [];
+                if ($rawImages !== null && $rawImages !== '') {
+                    // support comma or semicolon separated image lists
+                    $parts = preg_split('/[,;]+/', (string)$rawImages);
+                    $images = array_values(array_filter(array_map('trim', $parts), fn($v) => $v !== ''));
+                }
+
+                $buffer[] = [
+                    'name' => $getValue($namePos),
+                    'sku' => $getValue($skuPos),
+                    'price' => $getValue($pricePos),
+                    'category' => $getValue($categoryPos),
+                    'description' => $getValue($descriptionPos),
+                    'images' => $images,
+                ];
+
+                if (count($buffer) >= $chunkSize) {
+                    yield $buffer;
+                    $buffer = [];
+                }
             }
 
-            $products[] = [
-                'name' => $getValue($namePos),
-                'sku' => $getValue($skuPos),
-                'price' => $getValue($pricePos),
-                'category' => $getValue($categoryPos),
-                'description' => $getValue($descriptionPos),
-                'images' => $images,
-            ];
+            if (!empty($buffer)) {
+                yield $buffer;
+            }
+        } finally {
+            fclose($handle);
         }
-
-        fclose($handle);
-
-        return $products;
     }
 }

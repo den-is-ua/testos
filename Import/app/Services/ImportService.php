@@ -41,9 +41,9 @@ class ImportService
         $this->AISetupperSettings->setupSettings($this->import);
     }
 
-    public function parse()
+    public function parse(): iterable
     {
-        $this->parser->parse();
+        return $this->parser->parse();
     }
 
     private function parserMap(): ParserContract

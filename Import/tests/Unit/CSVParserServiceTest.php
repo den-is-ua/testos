@@ -37,7 +37,10 @@ class CSVParserServiceTest extends TestCase
         $service = new CSVParserService($import);
         $service->setupSettings(3, 0, 1, 2, 3, 4, 5);
 
-        $products = $service->parse();
+        $products = [];
+        foreach ($service->parse() as $chunk) {
+            $products = array_merge($products, $chunk);
+        }
 
         // Only the third row should be parsed due to start_row = 3
         $this->assertCount(1, $products);
