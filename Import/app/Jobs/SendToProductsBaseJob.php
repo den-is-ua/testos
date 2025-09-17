@@ -9,19 +9,10 @@ class SendToProductsBaseJob implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(public $importId, public $products) {}
 
-    /**
-     * Execute the job.
-     */
-    public function handle(): void
-    {
-        //
-    }
+    public function handle() {}
+
+    public function viaConnection() { return 'rabbitmq'; }
+    public function viaQueue()      { return 'imports'; }
 }
