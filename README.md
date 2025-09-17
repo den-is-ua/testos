@@ -13,6 +13,12 @@ nano /etc/hosts
 # 127.0.0.1 import.loc
 ```
 
+Run queues
+```
+docker exec -it import-app php artisan queue:work rabbitmq --queue=import_confirmations,default
+docker exec -it product-base-app php artisan queue:work rabbitmq --queue=imports
+```
+
 # Postman api collection
 Download the dump file and import to Postman
 [File](.postman/TestOS.postman_collection.json)
@@ -31,3 +37,12 @@ docker exec -it product-base-app php artisan test
 # Import
 Setup `GEMINI_API_KEY` in the `.env` file
 [Get an api key](https://aistudio.google.com/app/apikey)
+
+### Go under docker container
+```
+docker exec -it import-app bash
+```
+
+### Testing
+```
+docker exec -it import-app php artisan test
