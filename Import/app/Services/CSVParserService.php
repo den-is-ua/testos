@@ -125,7 +125,7 @@ class CSVParserService implements ParserContract
                     $getValue($categoryPos),
                     $getValue($descriptionPos),
                     $images,
-                );
+                )->toArray();
 
                 if (count($buffer) >= $chunkSize) {
                     yield $buffer;

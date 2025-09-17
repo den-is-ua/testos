@@ -19,4 +19,9 @@ class ProductOV
     {
         
     }
+
+    public function toArray()
+    {
+        return (array)$this;
+    }
 }

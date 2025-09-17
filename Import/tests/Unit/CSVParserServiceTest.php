@@ -55,7 +55,7 @@ class CSVParserServiceTest extends TestCase
             'Cat B',
             'Desc two',
             ['http://img3.jpg', 'http://img4.jpg']
-        );
+        )->toArray();
 
         $this->assertEquals($expected, $products[0]);
 

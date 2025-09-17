@@ -28,4 +28,7 @@ class ConfirmFromProductsBaseJob implements ShouldQueue
 
         //TODO implement pusher notification of progress!
     }
+
+    public function viaConnection() { return 'rabbitmq'; }
+    public function viaQueue()      { return 'import_confirmations'; }
 }
