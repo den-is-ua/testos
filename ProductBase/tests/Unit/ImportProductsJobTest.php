@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Queue;
 use Mockery;
@@ -10,6 +11,9 @@ use App\Jobs\ConfirmImportJob;
 
 class ImportProductsJobTest extends TestCase
 {
+    use RefreshDatabase;
+
+    
     public function tearDown(): void
     {
         Mockery::close();
@@ -25,18 +29,6 @@ class ImportProductsJobTest extends TestCase
             ['sku' => 'SKU1', 'name' => 'Product A', 'price' => 10],
             ['sku' => 'SKU2', 'name' => 'Product B', 'price' => 20],
         ];
-
-        // Mock the static UpsertProductService::upsert call using Mockery alias.
-        // Note: avoid referencing App\Services\UpsertProductService directly to allow alias mock.
-        $upsertMock = Mockery::mock('alias:App\Services\UpsertProductService');
-        $upsertMock->shouldReceive('upsert')
-            ->once()
-            ->with($products)
-            ->andReturn([
-                'updatedCount' => 0,
-                'createdCount' => 2,
-                'total' => 2,
-            ]);
 
         $job = new ImportProductsJob($importId, $products);
         $job->handle();
