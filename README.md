@@ -20,6 +20,11 @@ docker exec -it import-app php artisan queue:work rabbitmq --queue=import_confir
 docker exec -it product-base-app php artisan queue:work rabbitmq --queue=imports
 ```
 
+Run vite
+```
+docker exec admin-app npm run dev
+```
+
 # Postman api collection
 Download the dump file and import to Postman
 [File](.postman/TestOS.postman_collection.json)

@@ -22,5 +22,4 @@ docker exec admin-app cp .env.example .env
 docker exec admin-app php artisan key:generate
 docker exec admin-app php artisan migrate
 docker exec admin-app npm install
-docker exec admin-app npm run dev
 

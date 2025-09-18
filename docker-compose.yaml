@@ -84,7 +84,7 @@ services:
         container_name: testos-db
         hostname: testos-db
         volumes:
-            - ./.docker/postgresql:/var/lib/postgresql
+            - ./.docker/postgresql:/var/lib/postgresql/data
         environment:
             POSTGRES_PASSWORD: secret
         ports:
