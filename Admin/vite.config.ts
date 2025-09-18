@@ -23,5 +23,5 @@ export default defineConfig({
         cors: true,
         watch: { usePolling: true } // good for Docker on macOS/Windows
     },
-    plugins: [vue()],
+    plugins: [vue(), tailwindcss()],
 })
