@@ -1,20 +1,23 @@
-Architecture
-[*] UI diagram
+# Architecture
+- [x] UI diagram
 
-Product Base
-[*] DB model
-[*] Api
-[*] Browser test
-[*] Postmen
-[*] Bulk upsert
+# Product Base
+- [x] DB model
+- [x] Api
+- [x] Http test
+- [x] Unit test
+- [x] Postmen
+- [x] Bulk upsert
 
-Import
-[*] DB model
-[] Api
-[] Unit test
-[] Browser test
+# Import
+- [x] DB model
+- [x] Api
+- [x] Unit test
+- [x] Http test
+- [ ] Postman
 
-Admin
-[] DB model
-[] UI iterface
-[] Browser test
+# Admin
+- [ ] DB model
+- [ ] BE part
+- [ ] FE part
+- [ ] Notifications

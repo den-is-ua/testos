@@ -1,1 +1,0 @@
-- [ ] Add new upsert endpoint to ProductController\n- [ ] Update routes/api.php to include upsert endpoint\n- [ ] Test the new upsert endpoint
