@@ -1,5 +1,33 @@
 version: "3.9"
 services:
+    admin-web:  
+        image: httpd:2.4
+        container_name: admin-web
+        volumes:
+            - ./.docker/Admin/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+            - ./Admin/public:/app/public
+            - ./Admin/storage/app/public:/app/storage/app/public
+        ports:
+            - "127.0.0.1:80:80"
+        hostname: admin.loc
+        networks:
+            - testos
+        depends_on:
+            - admin-app
+    admin-app:
+        build: ./.docker/Admin
+        container_name: admin-app
+        volumes:
+            - ./Admin:/app:rw
+        ports:
+            - "5173:5173"
+        networks:
+            - testos
+        depends_on:
+            - db
+        working_dir: /app
+
+
     product-base-web:  
         image: httpd:2.4
         container_name: product-base-web
@@ -8,7 +36,7 @@ services:
             - ./ProductBase/public:/app/public
             - ./ProductBase/storage/app/public:/app/storage/app/public
         ports:
-            - "127.0.0.1:80:80"
+            - "127.0.0.1:81:80"
         hostname: product-base.loc
         networks:
             - testos
@@ -33,7 +61,7 @@ services:
             - ./Import/public:/app/public
             - ./Import/storage/app/public:/app/storage/app/public
         ports:
-            - "127.0.0.1:81:80"
+            - "127.0.0.1:82:80"
         hostname: import.loc
         networks:
             - testos
@@ -49,45 +77,6 @@ services:
         depends_on:
             - db
         working_dir: /app
-
-    admin-web:  
-        image: httpd:2.4
-        container_name: admin-web
-        volumes:
-            - ./.docker/Admin/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
-            - ./Admin/public:/app/public
-            - ./Admin/storage/app/public:/app/storage/app/public
-        ports:
-            - "127.0.0.1:82:80"
-        hostname: admin.loc
-        networks:
-            - testos
-        depends_on:
-            - admin-app
-    admin-app:
-        build: ./.docker/Admin
-        container_name: admin-app
-        volumes:
-            - ./Admin:/app:rw
-        networks:
-            - testos
-        depends_on:
-            - db
-        working_dir: /app
-
-    admin-node:
-        image: node:20-alpine
-        container_name: admin-node
-        working_dir: /var/www/html
-        command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
-        ports:
-            - "5173:5173"      # Vite HMR
-        volumes:
-            - ./Admin:/var/www/html
-        depends_on:
-            - admin-app
-        networks:
-            - testos
 
     db:
         image: postgres:17.6

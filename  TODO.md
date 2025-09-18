@@ -21,3 +21,6 @@
 - [ ] BE part
 - [ ] FE part
 - [ ] Notifications
+
+# Others
+- [ ] Add traffic to docker compose

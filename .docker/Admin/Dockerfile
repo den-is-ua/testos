@@ -17,6 +17,15 @@ RUN apt-get update \
  && install-php-extensions pdo_pgsql pgsql zip igbinary xhprof sockets \
  && rm -rf /var/lib/apt/lists/*
 
+ # Composer (if you want it available inside container)
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+ && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+ && rm -f composer-setup.php
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest
+
 # create group/user correctly + home dir
 RUN groupadd -g ${gid} dev \
  && useradd -m -u ${uid} -g ${gid} -s /bin/bash dev \
@@ -29,10 +38,11 @@ ENV HOME=/home/dev \
     COMPOSER_HOME=/home/dev/.composer \
     PATH="$PATH:/home/dev/.composer/vendor/bin"
 
-# Composer (if you want it available inside container)
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
- && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
- && rm -f composer-setup.php
+ENV NPM_CONFIG_PREFIX=/home/dev/.npm-global \
+    npm_config_prefix=/home/dev/.npm-global \
+    NPM_CONFIG_CACHE=/home/dev/.npm/_cacache \
+    npm_config_cache=/home/dev/.npm/_cacache \
+    PATH=$PATH:/home/dev/.npm-global/bin
 
 USER dev
 WORKDIR /app
