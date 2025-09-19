@@ -28,6 +28,7 @@ import DialogHeader from "@/components/ui/dialog/DialogHeader.vue";
 import DialogTitle from "@/components/ui/dialog/DialogTitle.vue";
 import DialogDescription from "@/components/ui/dialog/DialogDescription.vue";
 import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
+import Icon from "@/components/Icon.vue";
 
 type Invoice = {
     invoice: string;
@@ -141,7 +142,7 @@ const pages = computed(() => {
                 <Dialog>
                     <DialogTrigger as-child>
                         <Button variant="outline" class="mb-[20px]">
-                            Import File
+                            <Icon name="file-down" class="w-4 h-4" /> Import File
                         </Button>
                     </DialogTrigger>
                     <DialogContent class="sm:max-w-[425px]">
