@@ -29,8 +29,6 @@ import DialogTitle from "@/components/ui/dialog/DialogTitle.vue";
 import DialogDescription from "@/components/ui/dialog/DialogDescription.vue";
 import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
 import Icon from "@/components/Icon.vue";
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
 import * as z from 'zod'
 
 type Invoice = {
@@ -92,28 +90,13 @@ const schema = z.object({
     ),
 })
 
-const form = useForm({
-  validationSchema: toTypedSchema(schema),
-})
-
-/**
- * Submit handler.
- * If you use Inertia, send FormData as below.
- * Otherwise, switch to fetch()/axios() accordingly.
- */
 const onSubmit = async (values: { file: File }) => {
   const fd = new FormData()
   fd.append('file', values.file)
 
-  // Inertia example:
-  // @ts-ignore – assume you have route() helper and router from @inertiajs/vue3
-  // router.post(route('imports.store'), fd, { forceFormData: true })
-
-  // Fetch example:
   await fetch('/imports', {
     method: 'POST',
-    body: fd,
-    // No need to set Content-Type; the browser sets multipart/form-data with boundary
+    body: fd
   })
 }
 
@@ -194,21 +177,20 @@ const pages = computed(() => {
                     </DialogHeader>
 
                     <!-- The actual form -->
-                    <Form v-slot="{ handleSubmit }" as="form" id="importForm" keep-values
-                        @submit.prevent="handleSubmit(onSubmit)">
+                    <form @submit="onSubmit" id="importForm" @submit.prevent="submit">
                         <FormField v-slot="{ componentField }" name="file">
                             <FormItem>
                                 <FormLabel>File</FormLabel>
                                 <FormControl>
                                     <!-- Bind the picked File object to the field -->
                                     <Input type="file" accept=".csv,.xls,.xlsx"
-                                        @change="(e) => componentField.onChange((e.target as HTMLInputElement).files?.[0] ?? null)" />
+                                        @change="(e: Event) => componentField.onChange((e.target as HTMLInputElement).files?.[0] ?? null)" />
                                 </FormControl>
                                 <FormDescription>Allowed: CSV, XLS, XLSX. Max 10MB.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         </FormField>
-                    </Form>
+                    </form>
 
                     <DialogFooter>
                         <Button type="submit" form="importForm">
