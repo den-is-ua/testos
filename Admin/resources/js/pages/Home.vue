@@ -2,7 +2,6 @@
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -10,6 +9,17 @@ import {
 } from "@/components/ui/table"
 import { Progress } from "@/components/ui/progress";
 import { ref, onMounted, computed } from "vue";
+import { FormField } from "@/components/ui/form";
+import FormItem from "@/components/ui/form/FormItem.vue";
+import FormLabel from "@/components/ui/form/FormLabel.vue";
+import FormControl from "@/components/ui/form/FormControl.vue";
+import Input from "@/components/ui/input/Input.vue";
+import FormDescription from "@/components/ui/form/FormDescription.vue";
+import FormMessage from "@/components/ui/form/FormMessage.vue";
+import Card from "@/components/ui/card/Card.vue";
+import CardHeader from "@/components/ui/card/CardHeader.vue";
+import CardContent from "@/components/ui/card/CardContent.vue";
+import CardTitle from "@/components/ui/card/CardTitle.vue";
 
 type Invoice = {
     invoice: string;
@@ -64,7 +74,7 @@ const pages = computed(() => {
 
 <template>
     <div class="flex">
-    <div class="w-[60%] m-20">
+        <div class="w-[60%] m-20">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -98,28 +108,16 @@ const pages = computed(() => {
 
             <div class="flex items-center w-[100%] justify-center mt-[20px]">
                 <div class="flex items-center space-x-2">
-                    <button
-                        class="btn"
-                        :disabled="page === 1 || loading"
-                        @click="goTo(page - 1)"
-                    >
+                    <button class="btn" :disabled="page === 1 || loading" @click="goTo(page - 1)">
                         Prev
                     </button>
 
-                    <button
-                        v-for="p in pages"
-                        :key="p"
-                        :class="['btn', { 'btn-primary': p === page }]"
-                        @click="goTo(p)"
-                    >
+                    <button v-for="p in pages" :key="p" :class="['btn', { 'btn-primary': p === page }]"
+                        @click="goTo(p)">
                         {{ p }}
                     </button>
 
-                    <button
-                        class="btn"
-                        :disabled="page === lastPage || loading"
-                        @click="goTo(page + 1)"
-                    >
+                    <button class="btn" :disabled="page === lastPage || loading" @click="goTo(page + 1)">
                         Next
                     </button>
                 </div>
@@ -127,6 +125,16 @@ const pages = computed(() => {
         </div>
 
         <div class="w-[40%] m-20">
+            <FormField name="username" v-slot="{ field }">
+                <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                        <Input placeholder="shadcn" v-bind="field" />
+                    </FormControl>
+                    <FormDescription />
+                    <FormMessage />
+                </FormItem>
+            </FormField>
             <Card class="w-[100%]">
                 <CardHeader>
                     <CardTitle>Import name</CardTitle>
