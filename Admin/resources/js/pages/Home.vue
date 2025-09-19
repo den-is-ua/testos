@@ -8,7 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Progress } from "reka-ui/namespaced";
+import { Progress } from "@/components/ui/progress";
 import { ref } from "vue";
 
 const invoices = [
@@ -56,7 +56,7 @@ const invoices = [
     },
 ]
 
-const progress = ref(100)
+const progress = ref(32)
 </script>
 
 <template>
