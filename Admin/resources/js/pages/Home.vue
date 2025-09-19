@@ -29,6 +29,9 @@ import DialogTitle from "@/components/ui/dialog/DialogTitle.vue";
 import DialogDescription from "@/components/ui/dialog/DialogDescription.vue";
 import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
 import Icon from "@/components/Icon.vue";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import * as z from 'zod'
 
 type Invoice = {
     invoice: string;
@@ -74,8 +77,44 @@ function goTo(p: number) {
     fetchInvoices();
 }
 
-function onSubmit(values: any) {
-  console.log('Submitted');
+const schema = z.object({
+  file: z
+    .instanceof(File, { message: 'Please choose a file.' })
+    .refine((f) => f.size <= 10 * 1024 * 1024, 'File must be ≤ 10MB')
+    .refine(
+      (f) =>
+        ['text/csv',
+         'application/vnd.ms-excel',
+         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ].includes(f.type) ||
+        /\.(csv|xls|xlsx)$/i.test(f.name),
+      'Only CSV or Excel files are allowed'
+    ),
+})
+
+const form = useForm({
+  validationSchema: toTypedSchema(schema),
+})
+
+/**
+ * Submit handler.
+ * If you use Inertia, send FormData as below.
+ * Otherwise, switch to fetch()/axios() accordingly.
+ */
+const onSubmit = async (values: { file: File }) => {
+  const fd = new FormData()
+  fd.append('file', values.file)
+
+  // Inertia example:
+  // @ts-ignore – assume you have route() helper and router from @inertiajs/vue3
+  // router.post(route('imports.store'), fd, { forceFormData: true })
+
+  // Fetch example:
+  await fetch('/imports', {
+    method: 'POST',
+    body: fd,
+    // No need to set Content-Type; the browser sets multipart/form-data with boundary
+  })
 }
 
 const pages = computed(() => {
@@ -138,44 +177,46 @@ const pages = computed(() => {
         </div>
 
         <div class="w-[40%] m-20">
-            <Form v-slot="{ handleSubmit }" as="" keep-values>
-                <Dialog>
-                    <DialogTrigger as-child>
-                        <Button variant="outline" class="mb-[20px]">
-                            <Icon name="file-down" class="w-4 h-4" /> Import File
+            <Dialog>
+                <DialogTrigger as-child>
+                    <Button variant="outline" class="mb-[20px]">
+                        <Icon name="file-down" class="w-4 h-4" />
+                        Import File
+                    </Button>
+                </DialogTrigger>
+
+                <DialogContent class="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Import file</DialogTitle>
+                        <DialogDescription>
+                            Choose a CSV or Excel file and click Upload.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <!-- The actual form -->
+                    <Form v-slot="{ handleSubmit }" as="form" id="importForm" keep-values
+                        @submit.prevent="handleSubmit(onSubmit)">
+                        <FormField v-slot="{ componentField }" name="file">
+                            <FormItem>
+                                <FormLabel>File</FormLabel>
+                                <FormControl>
+                                    <!-- Bind the picked File object to the field -->
+                                    <Input type="file" accept=".csv,.xls,.xlsx"
+                                        @change="(e) => componentField.onChange((e.target as HTMLInputElement).files?.[0] ?? null)" />
+                                </FormControl>
+                                <FormDescription>Allowed: CSV, XLS, XLSX. Max 10MB.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        </FormField>
+                    </Form>
+
+                    <DialogFooter>
+                        <Button type="submit" form="importForm">
+                            Upload
                         </Button>
-                    </DialogTrigger>
-                    <DialogContent class="sm:max-w-[425px]">
-                        <DialogHeader>
-                            <DialogTitle>Edit profile</DialogTitle>
-                            <DialogDescription>
-                                Make changes to your profile here. Click save when you're done.
-                            </DialogDescription>
-                        </DialogHeader>
-
-                        <Form v-slot="{ handleSubmit }" as="form" keep-values @submit.prevent="handleSubmit(onSubmit)">
-                            <FormField v-slot="{ componentField }" name="username">
-                                <FormItem>
-                                    <FormLabel>Username</FormLabel>
-                                    <FormControl>
-                                        <Input type="text" placeholder="shadcn" v-bind="componentField" />
-                                    </FormControl>
-                                    <FormDescription>
-                                        This is your public display name.
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            </FormField>
-                        </Form>
-
-                        <DialogFooter>
-                            <Button type="submit" form="dialogForm">
-                                Save changes
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            </Form>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
             <Card class="w-[100%]">
                 <CardHeader>
                     <CardTitle>Import name</CardTitle>
