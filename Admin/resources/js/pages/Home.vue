@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table"
 import { Progress } from "@/components/ui/progress";
 import { ref, onMounted, computed } from "vue";
-import { FormField } from "@/components/ui/form";
+import { Form, FormField } from "@/components/ui/form";
 import FormItem from "@/components/ui/form/FormItem.vue";
 import FormLabel from "@/components/ui/form/FormLabel.vue";
 import FormControl from "@/components/ui/form/FormControl.vue";
@@ -20,6 +20,14 @@ import Card from "@/components/ui/card/Card.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import CardTitle from "@/components/ui/card/CardTitle.vue";
+import Dialog from "@/components/ui/dialog/Dialog.vue";
+import DialogTrigger from "@/components/ui/dialog/DialogTrigger.vue";
+import Button from "@/components/ui/button/Button.vue";
+import DialogContent from "@/components/ui/dialog/DialogContent.vue";
+import DialogHeader from "@/components/ui/dialog/DialogHeader.vue";
+import DialogTitle from "@/components/ui/dialog/DialogTitle.vue";
+import DialogDescription from "@/components/ui/dialog/DialogDescription.vue";
+import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
 
 type Invoice = {
     invoice: string;
@@ -63,6 +71,10 @@ function goTo(p: number) {
     if (p < 1 || p > lastPage.value) return;
     page.value = p;
     fetchInvoices();
+}
+
+function onSubmit(values: any) {
+  console.log('Submitted');
 }
 
 const pages = computed(() => {
@@ -125,16 +137,44 @@ const pages = computed(() => {
         </div>
 
         <div class="w-[40%] m-20">
-            <FormField name="username" v-slot="{ field }">
-                <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                        <Input placeholder="shadcn" v-bind="field" />
-                    </FormControl>
-                    <FormDescription />
-                    <FormMessage />
-                </FormItem>
-            </FormField>
+            <Form v-slot="{ handleSubmit }" as="" keep-values>
+                <Dialog>
+                    <DialogTrigger as-child>
+                        <Button variant="outline" class="mb-[20px]">
+                            Import File
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent class="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Edit profile</DialogTitle>
+                            <DialogDescription>
+                                Make changes to your profile here. Click save when you're done.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <Form v-slot="{ handleSubmit }" as="form" keep-values @submit.prevent="handleSubmit(onSubmit)">
+                            <FormField v-slot="{ componentField }" name="username">
+                                <FormItem>
+                                    <FormLabel>Username</FormLabel>
+                                    <FormControl>
+                                        <Input type="text" placeholder="shadcn" v-bind="componentField" />
+                                    </FormControl>
+                                    <FormDescription>
+                                        This is your public display name.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            </FormField>
+                        </Form>
+
+                        <DialogFooter>
+                            <Button type="submit" form="dialogForm">
+                                Save changes
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            </Form>
             <Card class="w-[100%]">
                 <CardHeader>
                     <CardTitle>Import name</CardTitle>
