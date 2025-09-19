@@ -41,7 +41,7 @@ class ImportClient
         return $response;
     }
 
-    public function throwExceptionIfResponseFailed(string $method, Response $response)
+    private function throwExceptionIfResponseFailed(string $method, Response $response)
     {
         if ($response->serverError()) {
             throw new Exception(__CLASS__ . $method .  ' Response failed: ' . json_encode($response));
