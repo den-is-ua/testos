@@ -13,7 +13,7 @@ COPY ./php/php.ini "$PHP_INI_DIR/php.ini"
 # tools & PHP extensions
 RUN apt-get update \
  && apt-get upgrade -y \
- && apt-get install -y zip unzip git curl \
+ && apt-get install -y zip unzip git curl telnet nano \
  && install-php-extensions pdo_pgsql pgsql zip igbinary xhprof sockets \
  && rm -rf /var/lib/apt/lists/*
 

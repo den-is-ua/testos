@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreImportRequest;
+use App\Http\Resources\ImportResource;
 use App\Jobs\SetupImportSettingsByAIJob;
 use App\Services\ImportService;
 use Illuminate\Http\Request;
@@ -20,7 +21,8 @@ class ImportController extends Controller
         SetupImportSettingsByAIJob::dispatch($import->id);
 
         return response()->json([
-            'success' => true
+            'success' => true,
+            'data' => new ImportResource($import)
         ], 201);
     }
 }

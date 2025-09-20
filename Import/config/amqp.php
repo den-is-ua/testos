@@ -1,6 +1,6 @@
 <?php
 
-use PhpAmqpLib\Connection\AMQPLazySSLConnection;
+use PhpAmqpLib\Connection\AMQPLazyConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 return [
@@ -19,10 +19,10 @@ return [
                  * Lazy connection does not support more than 1 host
                  * Change connection **class** if you want to try more than one host
                  */
-                'class' => AMQPLazySSLConnection::class,
+                'class' => AMQPLazyConnection::class,
                 'hosts' => [
                     [
-                        'host' => env('AMQP_HOST', 'localhost'),
+                        'host' => env('AMQP_HOST', 'rabbitmq'),
                         'port' => env('AMQP_PORT', 5672),
                         'user' => env('AMQP_USER', 'guest'),
                         'password' => env('AMQP_PASSWORD', 'guest'),

@@ -13,7 +13,8 @@
         "anik/laravel-amqp": "^2.1",
         "google-gemini-php/laravel": "^2.0",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
