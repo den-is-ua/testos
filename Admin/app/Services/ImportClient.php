@@ -37,8 +37,12 @@ class ImportClient
 
         $this->throwExceptionIfResponseFailed(__METHOD__, $response);
 
-        $response->dd();
         return $response;
+    }
+
+    public function healthcheck()
+    {
+        return Http::withToken($this->key)->get($this->host . 'api/hc');
     }
 
     private function throwExceptionIfResponseFailed(string $method, Response $response)

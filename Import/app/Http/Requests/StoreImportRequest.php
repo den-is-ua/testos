@@ -16,6 +16,7 @@ class StoreImportRequest extends FormRequest
     {
         return [
             'file' => [
+                'bail',
                 'required',
                 'file',
                 'max:10240',

@@ -9,6 +9,10 @@ class ImportHashNotInProgress implements Rule
 {
     public function passes($attribute, $value): bool
     {
+        if (empty($value)) {
+            return true;
+        }
+
         $realPath = $value->getRealPath();
         $hash = hash_file('sha256', $realPath);
 
