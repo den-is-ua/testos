@@ -17,7 +17,7 @@ class ImportController extends Controller
 
         return response()->json([
             'message' => 'Import was uploaded',
-            'data' => $response
+            'data' => $response->json('data')
         ]);
     }
 }

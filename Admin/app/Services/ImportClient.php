@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 
@@ -32,13 +33,24 @@ class ImportClient
     {
         /** @var \Illuminate\Http\Client\Response $response */
         $response = Http::withToken($this->key)
-            ->attach('file', $file->get(), $file->getFilename())
+            ->attach(
+                'file',
+                fopen($file->getRealPath(), 'r'),
+                $file->getClientOriginalName()
+            )
+            ->acceptJson()
             ->post($this->host . 'api/imports');
+
+        Log::debug(__CLASS__ . __METHOD__, [
+            'status' => $response->status(),
+            'body'   => $response->body(),
+        ]);
 
         $this->throwExceptionIfResponseFailed(__METHOD__, $response);
 
         return $response;
     }
+
 
     public function healthcheck()
     {
