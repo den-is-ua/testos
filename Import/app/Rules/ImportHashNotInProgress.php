@@ -13,6 +13,10 @@ class ImportHashNotInProgress implements Rule
             return true;
         }
 
+        if (config('app.allow_upload_duplicated_file')) {
+            return true;
+        }
+
         $realPath = $value->getRealPath();
         $hash = hash_file('sha256', $realPath);
 
