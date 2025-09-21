@@ -5,7 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use App\Models\Import;
 
-class ImportHashNotInProgress implements Rule
+class ImportHasNotInProgress implements Rule
 {
     public function passes($attribute, $value): bool
     {
