@@ -42,3 +42,21 @@ export interface Import {
     progress: number;
     completed: boolean;
 }
+
+export interface Product {
+    id: number;
+    name: string;
+    sku: string;
+    price: number;
+    description: string;
+    images: string[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface ProductMeta {
+    total: number;
+    current_page: number;
+    last_page: number;
+    per_page: number;
+}

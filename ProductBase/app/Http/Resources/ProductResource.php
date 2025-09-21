@@ -17,10 +17,12 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'description' => $this->description,
+            'sku' => $this->sku,
             'price' => $this->price,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'description' => $this->description,
+            'images' => $this->images,
+            'created_at' => $this->created_at->format('d-m-y H:m:s'),
+            'updated_at' => $this->updated_at->format('d-m-y H:m:s'),
         ];
     }
 }

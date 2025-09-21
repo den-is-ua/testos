@@ -7,46 +7,53 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { Product } from "@/types";
 import { computed, onMounted, ref } from "vue";
+import { toast } from "vue-sonner";
 
-type Invoice = {
-    invoice: string;
-    paymentStatus: string;
-    totalAmount: string;
-    paymentMethod: string;
-};
 
-const items = ref<Invoice[]>([]);
+const products = ref<Product[]>([]);
 const page = ref(1);
 const perPage = ref(5);
 const total = ref(0);
 const lastPage = ref(1);
 const loading = ref(false);
-const progress = ref(32);
 
-async function fetchInvoices() {
+async function getProducts() {
     loading.value = true;
-    try {
-        const params = new URLSearchParams({ page: String(page.value), per_page: String(perPage.value) });
-        const res = await fetch(`/?${params.toString()}`, {
-            headers: { 'Accept': 'application/json' },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        items.value = data.data || [];
-        total.value = data.total || 0;
-        lastPage.value = data.last_page || 1;
-    } catch (e) {
-        console.error("Failed to load invoices", e);
-    } finally {
-        loading.value = false;
+
+    const params = new URLSearchParams({ page: String(page.value), per_page: String(perPage.value) });
+    const res = await fetch(`/products?${params.toString()}`, {
+        headers: { 'Accept': 'application/json' },
+    });
+
+    const data = await res.json()
+
+    if (res.status === 422) {
+        console.log(data)
+        toast.warning(data.message)
+        return
     }
+
+    if (res.status >= 500) {
+        toast.error('Something went wrong')
+        return
+    }
+
+    loading.value = false;
+
+    products.value = data.data as Product[]
+    
+    page.value = data.meta.page
+    perPage.value = data.meta.per_page
+    total.value = data.meta.total
+    lastPage.value = data.meta.last_page
 }
 
 function goTo(p: number) {
     if (p < 1 || p > lastPage.value) return;
     page.value = p;
-    fetchInvoices();
+    getProducts();
 }
 
 const pages = computed(() => {
@@ -56,7 +63,7 @@ const pages = computed(() => {
 });
 
 onMounted(() => {
-    fetchInvoices();
+    getProducts();
 });
 </script>
 
@@ -65,34 +72,34 @@ onMounted(() => {
         <TableHeader>
             <TableRow>
                 <TableHead class="w-[100px]">
-                    Invoice
+                    SKU
                 </TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Method</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Price</TableHead>
                 <TableHead class="text-right">
-                    Amount
+                    Updated At
                 </TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
-            <TableRow v-if="!loading && items.length === 0">
+            <TableRow v-if="!loading && products.length === 0">
                 <TableCell colspan="4" class="text-center py-6">No invoices found.</TableCell>
             </TableRow>
 
-            <TableRow v-for="invoice in items" :key="invoice.invoice">
+            <TableRow v-for="product in products" :key="product.id">
                 <TableCell class="font-medium">
-                    {{ invoice.invoice }}
+                    {{ product.sku }}
                 </TableCell>
-                <TableCell>{{ invoice.paymentStatus }}</TableCell>
-                <TableCell>{{ invoice.paymentMethod }}</TableCell>
+                <TableCell>{{ product.name }}</TableCell>
+                <TableCell>{{ product.price }}</TableCell>
                 <TableCell class="text-right">
-                    {{ invoice.totalAmount }}
+                    {{ product.updated_at }}
                 </TableCell>
             </TableRow>
         </TableBody>
     </Table>
 
-    <div class="flex items-center w-[100%] justify-center mt-[20px]">
+    <div class="flex items-center w-[100%] justify-center mt-[20px]" v-if="lastPage > 1">
         <div class="flex items-center space-x-2">
             <button class="btn" :disabled="page === 1 || loading" @click="goTo(page - 1)">
                 Prev
