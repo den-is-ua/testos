@@ -13,8 +13,8 @@ import DialogTitle from "@/components/ui/dialog/DialogTitle.vue";
 import DialogDescription from "@/components/ui/dialog/DialogDescription.vue";
 import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
 import Icon from "@/components/Icon.vue";
-import ProductsTable from "@/components/ProductsTable.vue";
-import ImportFileForm from "@/components/ImportFileForm.vue";
+import ProductsTable from "@/components/main/ProductsTable.vue";
+import ImportFileForm from "@/components/main/ImportFileForm.vue";
 import { ref } from "vue";
 
 const progress = ref(32)
@@ -44,12 +44,7 @@ const progress = ref(32)
                     </DialogHeader>
 
                     <ImportFileForm />
-
-                    <DialogFooter>
-                        <Button type="submit" form="importForm">
-                            Upload
-                        </Button>
-                    </DialogFooter>
+                    
                 </DialogContent>
             </Dialog>
             <Card class="w-[100%]">

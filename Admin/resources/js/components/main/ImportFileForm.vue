@@ -8,6 +8,7 @@ import FormDescription from "@/components/ui/form/FormDescription.vue";
 import FormMessage from "@/components/ui/form/FormMessage.vue";
 import { useForm, useSetFieldValue } from "vee-validate";
 import { ref } from "vue";
+import Button from "../ui/button/Button.vue";
 
 const file = ref<File | null>(null)
 const uploading = ref(false)
@@ -26,6 +27,7 @@ function submit() {
     body: formData,
     headers: {
       'X-CSRF-TOKEN': getMetaCsrf(),
+      'Accept': 'application/json'
     }
   })
 
@@ -47,5 +49,8 @@ function submit() {
                 <FormMessage />
             </FormItem>
         </FormField>
+        <Button type="submit" form="importForm" class="mt-[20px] float-right">
+            Upload
+        </Button>
     </form>
 </template>
