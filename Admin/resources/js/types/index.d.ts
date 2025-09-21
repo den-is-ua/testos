@@ -35,3 +35,10 @@ export interface User {
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
+
+export interface Import {
+    id: number;
+    file_name: string;
+    progress: number;
+    completed: boolean;
+}

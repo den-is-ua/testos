@@ -9,20 +9,22 @@ import FormMessage from "@/components/ui/form/FormMessage.vue";
 import { useForm, useSetFieldValue } from "vee-validate";
 import { ref } from "vue";
 import Button from "../ui/button/Button.vue";
+import { toast } from "vue-sonner"
+import Toaster from "./Toaster.vue";
+import { boolean } from "zod/v4";
 
 const file = ref<File | null>(null)
-const uploading = ref(false)
-const message = ref<string | null>(null)
-const error = ref<string | null>(null)
+
+const emit = defineEmits<{ 'form:sentWithSucccess':[boolean] }>()
 
 const getMetaCsrf = () =>
   document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content || '';
 
-function submit() {
+async function submit() {
   const formData = new FormData()
   formData.append('file', file.value)
 
-  const res = fetch('imports', {
+  const res = await fetch('imports', {
     method: 'POST',
     body: formData,
     headers: {
@@ -31,7 +33,21 @@ function submit() {
     }
   })
 
-  console.log(res, file)
+  const data = await res.json()
+
+  if (res.status === 422) {
+    console.log(data)
+    toast.warning(data.message)
+    return
+  }
+
+  if (res.status >= 500) {
+    toast.error('Something went wrong')
+    return
+  }
+
+  toast.success(data.message)
+  emit('form:sentWithSucccess', true)
 }
 
 </script>

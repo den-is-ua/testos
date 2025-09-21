@@ -15,9 +15,12 @@ import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
 import Icon from "@/components/Icon.vue";
 import ProductsTable from "@/components/main/ProductsTable.vue";
 import ImportFileForm from "@/components/main/ImportFileForm.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import Toaster from "@/components/main/Toaster.vue";
 
 const progress = ref(32)
+const formModalOpened = ref<boolean>(false)
+
 </script>
 
 <template>
@@ -27,9 +30,9 @@ const progress = ref(32)
         </div>
 
         <div class="w-[40%] m-20">
-            <Dialog>
+            <Dialog v-model:open="formModalOpened">
                 <DialogTrigger as-child>
-                    <Button variant="outline" class="mb-[20px]">
+                    <Button variant="outline" class="mb-[20px]" @click="formModalOpened = true">
                         <Icon name="file-down" class="w-4 h-4" />
                         Import File
                     </Button>
@@ -43,8 +46,8 @@ const progress = ref(32)
                         </DialogDescription>
                     </DialogHeader>
 
-                    <ImportFileForm />
-                    
+                    <ImportFileForm @form:sent-with-succcess="formModalOpened = false"/>
+
                 </DialogContent>
             </Dialog>
             <Card class="w-[100%]">
@@ -57,4 +60,5 @@ const progress = ref(32)
             </Card>
         </div>
     </div>
+    <Toaster></Toaster>
 </template>
