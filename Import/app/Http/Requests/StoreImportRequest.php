@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\ImportHashNotInProgress;
+use App\Rules\ImportHasNotInProgress;
 
 class StoreImportRequest extends FormRequest
 {
@@ -20,7 +20,7 @@ class StoreImportRequest extends FormRequest
                 'required',
                 'file',
                 'max:10240',
-                new ImportHashNotInProgress(),
+                new ImportHasNotInProgress(),
             ],
         ];
     }
