@@ -10,10 +10,10 @@ class SendToProductsBaseJob implements ShouldQueue
 {
     use Dispatchable, Queueable;
 
-    public function __construct(public $importId, public $products) {}
+    public function __construct(public $importId, public $products) {
+        $this->onQueue('imports');
+    }
 
-    public function handle() {}
-
-    public function viaConnection() { return 'rabbitmq'; }
-    public function viaQueue()      { return 'imports'; }
+     public function handle(): void
+     {}
 }

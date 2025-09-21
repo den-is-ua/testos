@@ -15,7 +15,7 @@ class ImportProductsJob implements ShouldQueue
      */
     public function __construct(public $importId, public $products)
     {
-        
+        $this->onQueue('imports');
     }
 
     /**
@@ -26,7 +26,4 @@ class ImportProductsJob implements ShouldQueue
         UpsertProductService::upsert($this->products);
         ConfirmImportJob::dispatch($this->importId);
     }
-
-    public function viaConnection() { return 'rabbitmq'; }
-    public function viaQueue()      { return 'imports'; }
 }

@@ -89,11 +89,13 @@ return [
                 'queue' => [
                     'declare' => true,
                     'durable' => true,
+                    'bind' => true,
                 ],
                 'exchange' => [
                     'name' => env('RABBITMQ_EXCHANGE', null),
                     'type' => env('RABBITMQ_EXCHANGE_TYPE', 'direct'),
-                    'declare' => false,
+                    'declare' => true,
+                    'durable' => true,
                 ],
             ],
             'worker' => env('RABBITMQ_WORKER', 'default'),
