@@ -12,6 +12,8 @@ import Button from "../ui/button/Button.vue";
 import { toast } from "vue-sonner"
 import Toaster from "./Toaster.vue";
 import { boolean } from "zod/v4";
+import { importsStore } from "@/stores/progressImportStore";
+import { Import } from "@/types";
 
 const file = ref<File | null>(null)
 
@@ -46,6 +48,7 @@ async function submit() {
     return
   }
 
+  importsStore().add(data.data as Import)
   toast.success(data.message)
   emit('form:sentWithSucccess', true)
 }

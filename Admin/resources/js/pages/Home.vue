@@ -17,9 +17,10 @@ import ProductsTable from "@/components/main/ProductsTable.vue";
 import ImportFileForm from "@/components/main/ImportFileForm.vue";
 import { onMounted, ref } from "vue";
 import Toaster from "@/components/main/Toaster.vue";
+import { importsStore } from "@/stores/progressImportStore";
 
-const progress = ref(32)
 const formModalOpened = ref<boolean>(false)
+const imports = importsStore().getAll()
 
 </script>
 
@@ -50,14 +51,17 @@ const formModalOpened = ref<boolean>(false)
 
                 </DialogContent>
             </Dialog>
-            <Card class="w-[100%]">
-                <CardHeader>
-                    <CardTitle>Import name</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <Progress v-model="progress" class="w-3/5" />
-                </CardContent>
-            </Card>
+            <div class="w-[100%]">
+                <Card class="w-[100%] mt-[20px]" v-for="imp in imports">
+                    <CardHeader>
+                        <CardTitle>{{ imp.file_name }}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Progress v-model="imp.progress" class="w-3/5" />
+                    </CardContent>
+                </Card>
+            </div>
+            
         </div>
     </div>
     <Toaster></Toaster>
