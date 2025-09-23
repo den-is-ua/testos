@@ -29,7 +29,7 @@ class ParseImportJob implements ShouldQueue
         $service = new CSVParserService($import);
         
         foreach ($service->parse() as $products) {
-            if (config('app.env' != 'testing')) {
+            if (config('app.env') != 'testing') {
                 $AMQSender->sendProducts($import->id, $products);
             }
             

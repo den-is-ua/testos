@@ -21,5 +21,6 @@ class SetupImportSettingsByAIJob implements ShouldQueue
     {
         $importService = new ImportService(Import::findOrFail($this->importId));
         $importService->setupSettingsByGemini();
+        ParseImportJob::dispatch($this->importId);
     }
 }
