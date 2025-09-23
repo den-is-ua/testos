@@ -30,6 +30,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="ALLOW_UPLOAD_DUPLICATED_FILE" value="false"/>
         <env name="LOG_CHANNEL" value="testing"/>
     </php>
 </phpunit>

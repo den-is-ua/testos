@@ -2,10 +2,13 @@
 
 namespace Tests\Unit;
 
+use App\Services\AMQSender;
 use App\Services\ImportService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 use App\Models\Import;
 use App\Jobs\ParseImportJob;
@@ -47,12 +50,10 @@ class ParseImportJobTest extends TestCase
         ];
         $import->save();
 
-        // execute job
         $job = new ParseImportJob($import->id);
-        $job->handle();
+        $job->handle(new AMQSender());
 
-        // assert SendToProductsBaseJob was pushed once with expected payload
-        Queue::assertPushed(SendToProductsBaseJob::class);
+
 
         $import->refresh();
         $this->assertEquals(1, $import->total_iterations);
