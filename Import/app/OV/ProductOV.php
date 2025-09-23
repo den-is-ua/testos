@@ -12,9 +12,9 @@ class ProductOV
         public string $name, 
         public string $sku, 
         public float $price, 
-        public string $category,
-        public string $description,
-        public array $images
+        public string $category = '',
+        public string $description = '',
+        public array $images = []
         )
     {
         
