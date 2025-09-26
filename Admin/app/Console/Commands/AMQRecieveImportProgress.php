@@ -2,18 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Services\AMQSender;
-use App\Services\UpsertProductService;
 use Illuminate\Console\Command;
+use Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class AMQRecieveProducts extends Command
+class AMQRecieveImportProgress extends Command
 {
-    protected $signature = 'amq:recieve-products';
+    protected $signature = 'amq:recieve-import-progress';
 
 
-    public function handle(AMQSender $AMQSender)
+    public function handle()
     {
         $host  = env('RABBITMQ_HOST');
         $port  = (int) env('RABBITMQ_PORT');
@@ -24,38 +23,31 @@ class AMQRecieveProducts extends Command
         $connection = new AMQPStreamConnection($host, $port, $user, $pass, $vhost);
         $channel    = $connection->channel();
 
-        $queue      = 'imports';
+        $queue      = 'import_progress';
 
         $channel->queue_declare($queue, false, true, false, false);
 
         // fair dispatch: at most 10 unacked messages per worker
         $channel->basic_qos(null, 10, null);
 
-        $callback = function (AMQPMessage $msg) use ($AMQSender) {
+        $callback = function (AMQPMessage $msg) {
             try {
                 $data = json_decode($msg->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
                 // (optional) validate schema/version
                 validator($data, [
-                    'import_id'            => 'required|integer',
-                    'products'            => 'required|array',
-                    'products.*.name'     => 'required|string',
-                    'products.*.sku'      => 'required|string',
-                    'products.*.price'    => 'required|numeric',
-                    'products.*.category' => 'nullable|string',
-                    'products.*.description' => 'nullable|string',
-                    'products.*.images'   => 'nullable|array',
+                    'id' => 'required|integer',
+                    'file_name' => 'required|string',
+                    'progress' => 'required|integer',
+                    'completed' => 'required|boolean'
                 ])->validate();
 
-                // Do your business logic here
-                UpsertProductService::upsert($data['products']);
-                $AMQSender->sendConfirmImport($data['import_id']);
 
                 $msg->ack();
-
-                $this->info('Data Upserted import_id: ' . $data['import_id']);
+                
+                Log::debug(__CLASS__ . __METHOD__, $data);
+                $this->info('Progress recieved: ' . $data['progress']);
             } catch (\Throwable $e) {
-                // requeue=false sends to DLX if configured; otherwise drops or keeps unacked
                 $this->error($e->getMessage());
                 $msg->reject(false);
             }

@@ -17,6 +17,7 @@ docker exec import-app cp .env.example .env
 docker exec import-app php artisan key:generate
 docker exec import-app php artisan migrate
 
+
 docker exec admin-app composer install
 docker exec admin-app cp .env.example .env
 docker exec admin-app php artisan key:generate
