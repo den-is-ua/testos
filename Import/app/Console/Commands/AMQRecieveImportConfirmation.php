@@ -46,7 +46,8 @@ class AMQRecieveImportConfirmation extends Command
                     $import->completed_at = now();
                     $import->save();
                 }
-
+                
+                $import->refresh();
                 $AMQSender->sendImportProgress($import);
 
                 $msg->ack();
