@@ -11,16 +11,14 @@ import DialogContent from "@/components/ui/dialog/DialogContent.vue";
 import DialogHeader from "@/components/ui/dialog/DialogHeader.vue";
 import DialogTitle from "@/components/ui/dialog/DialogTitle.vue";
 import DialogDescription from "@/components/ui/dialog/DialogDescription.vue";
-import DialogFooter from "@/components/ui/dialog/DialogFooter.vue";
 import Icon from "@/components/Icon.vue";
 import ProductsTable from "@/components/main/ProductsTable.vue";
 import ImportFileForm from "@/components/main/ImportFileForm.vue";
 import { onMounted, ref } from "vue";
 import Toaster from "@/components/main/Toaster.vue";
-import { importsStore } from "@/stores/progressImportStore";
+import ImportProgress from "@/components/main/ImportProgress.vue";
 
 const formModalOpened = ref<boolean>(false)
-const imports = importsStore().getAll()
 
 </script>
 
@@ -52,16 +50,8 @@ const imports = importsStore().getAll()
                 </DialogContent>
             </Dialog>
             <div class="w-[100%]">
-                <Card class="w-[100%] mt-[20px]" v-for="imp in imports">
-                    <CardHeader>
-                        <CardTitle>{{ imp.file_name }}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Progress v-model="imp.progress" class="w-3/5" />
-                    </CardContent>
-                </Card>
+                <ImportProgress></ImportProgress>
             </div>
-            
         </div>
     </div>
     <Toaster></Toaster>
