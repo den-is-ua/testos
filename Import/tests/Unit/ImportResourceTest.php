@@ -13,7 +13,7 @@ class ImportResourceTest extends TestCase
         $import = (object)[
             'id' => 2,
             'file_name' => 'file.csv',
-            'current_iterations' => 0,
+            'confirmed_iterations' => 0,
             'total_iterations' => 0,
             'completed_at' => null,
         ];
@@ -29,7 +29,7 @@ class ImportResourceTest extends TestCase
         $import = (object)[
             'id' => 3,
             'file_name' => 'file.csv',
-            'current_iterations' => 1,
+            'confirmed_iterations' => 1,
             'total_iterations' => 100,
             'completed_at' => null,
         ];
@@ -45,7 +45,7 @@ class ImportResourceTest extends TestCase
         $import = (object)[
             'id' => 3,
             'file_name' => 'file.csv',
-            'current_iterations' => 50,
+            'confirmed_iterations' => 50,
             'total_iterations' => 100,
             'completed_at' => null,
         ];
@@ -61,7 +61,7 @@ class ImportResourceTest extends TestCase
         $import = (object)[
             'id' => 4,
             'file_name' => 'done.csv',
-            'current_iterations' => 1,
+            'confirmed_iterations' => 1,
             'total_iterations' => 1,
             'completed_at' => '2025-01-01 00:00:00',
         ];

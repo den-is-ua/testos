@@ -10,8 +10,8 @@ class ImportResource extends JsonResource
     public function toArray(Request $request): array
     {
         $progress = 0;
-        if (!empty($this->total_iterations) && !empty($this->current_iterations)) {
-            $progress = (int)floor($this->current_iterations / $this->total_iterations * 100);
+        if (!empty($this->total_iterations) && !empty($this->confirmed_iterations)) {
+            $progress = (int)floor($this->confirmed_iterations / $this->total_iterations * 100);
         }
         
         return [
