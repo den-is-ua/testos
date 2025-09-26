@@ -5,8 +5,26 @@ import CardHeader from "../ui/card/CardHeader.vue";
 import CardTitle from "../ui/card/CardTitle.vue";
 import Progress from "../ui/progress/Progress.vue";
 import CardContent from "../ui/card/CardContent.vue";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
+import { Import } from "@/types";
 
 const imports = importsStore().getAll();
+ 
+var pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
+  cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+});
+
+var channel = pusher.subscribe("import-progress");
+
+channel.bind("updated-progress", (data: Import) => {
+    importsStore().update(data.id, data)
+
+    if (data.completed) {
+        importsStore().remove(data.id)
+    }
+});
+
 </script>
 
 <template>

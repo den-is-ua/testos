@@ -12,5 +12,9 @@ export function importsStore() {
   }
   function clear() { state.items = [] }
   function getAll() { return state.items }
-  return { state, count, add, clear, remove, getAll }
+  function update(importId: number, item: Import) { 
+    const i = state.items.findIndex(x => x.id === importId)
+    if (i !== -1) state.items[i] = item;
+  }
+  return { state, count, add, clear, remove, getAll, update }
 }

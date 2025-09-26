@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use Pusher\Pusher;
 
 class AMQRecieveImportProgress extends Command
 {
@@ -42,12 +43,21 @@ class AMQRecieveImportProgress extends Command
                     'completed' => 'required|boolean'
                 ])->validate();
 
+                $pusher = new Pusher(
+                    env("PUSHER_APP_KEY"), 
+                    env("PUSHER_APP_SECRET"), 
+                    env("PUSHER_APP_ID"), 
+                    array('cluster' => env("PUSHER_APP_CLUSTER"))
+                );
+
+                $pusher->trigger('import-progress', 'updated-progress', $data);
 
                 $msg->ack();
                 
                 Log::debug(__CLASS__ . __METHOD__, $data);
                 $this->info('Progress recieved: ' . $data['progress']);
             } catch (\Throwable $e) {
+                Log::error($e->getMessage(), $e->getTrace());
                 $this->error($e->getMessage());
                 $msg->reject(false);
             }
