@@ -16,7 +16,7 @@ class ParseImportJobTest extends TestCase
     /**
      * @test
      */
-    public function handles_and_dispatches_chunks_and_increments_total_iterations(): void
+    public function test_handles_and_dispatches_chunks_and_increments_total_iterations(): void
     {
         Queue::fake();
 

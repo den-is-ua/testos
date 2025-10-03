@@ -64,6 +64,7 @@ class CSVAISetupperSettingsService implements AISetupperSettingsContract
             7) Detect the enclosure (usually `"`). If unclear, use `"`; escape is `\` by default.
             8) Always include ALL keys in the JSON. Use null only where the column truly does not exist.
             9) Output MUST be ONLY a single minified JSON object. No markdown, no backticks, no commentary.
+            10) Start row position begin from 1
 
             Return exactly the JSON object.
             PROMPT, [

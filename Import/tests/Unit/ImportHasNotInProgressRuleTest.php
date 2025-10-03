@@ -14,7 +14,7 @@ class ImportHasNotInProgressRuleTest extends TestCase
     /**
      * @test
      */
-    public function allows_upload_when_allow_upload_duplicated_file_is_true(): void
+    public function test_allows_upload_when_allow_upload_duplicated_file_is_true(): void
     {
         // prepare CSV content
         $csv = "name,sku\nProduct A,SKU1\n";

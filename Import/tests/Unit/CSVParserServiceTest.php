@@ -16,7 +16,7 @@ class CSVParserServiceTest extends TestCase
     /**
      * @test
      */
-    public function parse_reads_csv_and_splits_images_and_respects_start_row()
+    public function test_parse_reads_csv_and_splits_images_and_respects_start_row()
     {
         $relative = Str::random() . '.csv';
         $fullPath = Storage::path($relative);

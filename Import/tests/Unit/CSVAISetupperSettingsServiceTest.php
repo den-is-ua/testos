@@ -16,7 +16,7 @@ class CSVAISetupperSettingsServiceTest extends TestCase
     /**
      * @test
      */
-    public function setup_settings_calls_gemini_with_expected_parameters()
+    public function test_setup_settings_calls_gemini_with_expected_parameters()
     {
         $path = Str::random();
 

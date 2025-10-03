@@ -45,7 +45,7 @@ class ImportTest extends TestCase
     /**
      * @test
      */
-    public function store_endpoint_rejects_duplicate_in_progress_hash()
+    public function test_store_endpoint_rejects_duplicate_in_progress_hash()
     {
         Storage::fake('local');
         Queue::fake();

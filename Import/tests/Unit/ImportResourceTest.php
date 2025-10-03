@@ -11,7 +11,7 @@ class ImportResourceTest extends TestCase
     /**
      * @test
      */
-    public function progress_is_zero_in_default()
+    public function test_progress_is_zero_in_default()
     {
         $import = (object) [
             'id' => 2,
@@ -30,7 +30,7 @@ class ImportResourceTest extends TestCase
     /**
      * @test
      */
-    public function progress_1_percent()
+    public function test_progress_1_percent()
     {
         $import = (object) [
             'id' => 3,
@@ -49,7 +49,7 @@ class ImportResourceTest extends TestCase
     /**
      * @test
      */
-    public function progress_50_percent()
+    public function test_progress_50_percent()
     {
         $import = (object) [
             'id' => 3,
@@ -68,7 +68,7 @@ class ImportResourceTest extends TestCase
     /**
      * @test
      */
-    public function progress_completed()
+    public function test_progress_completed()
     {
         $import = (object) [
             'id' => 4,
