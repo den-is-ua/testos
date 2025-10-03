@@ -7,22 +7,23 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Product } from "@/types";
-import { computed, onMounted, ref } from "vue";
+import { PaginationItem, Product } from "@/types";
+import { onMounted, ref } from "vue";
 import { toast } from "vue-sonner";
+import Pagination from "./Pagination.vue";
 
 
 const products = ref<Product[]>([]);
-const page = ref(1);
-const perPage = ref(5);
+const perPage = ref(10);
 const total = ref(0);
 const lastPage = ref(1);
+const links = ref<PaginationItem[]>([]);
 const loading = ref(false);
 
-async function getProducts() {
+async function getProducts(page: number = 1) {
     loading.value = true;
 
-    const params = new URLSearchParams({ page: String(page.value), per_page: String(perPage.value) });
+    const params = new URLSearchParams({ page: String(page), per_page: String(perPage.value) });
     const res = await fetch(`/products?${params.toString()}`, {
         headers: { 'Accept': 'application/json' },
     });
@@ -44,26 +45,14 @@ async function getProducts() {
 
     products.value = data.data as Product[]
     
-    page.value = data.meta.page
     perPage.value = data.meta.per_page
     total.value = data.meta.total
     lastPage.value = data.meta.last_page
+    links.value = data.meta.links as PaginationItem[]
 }
-
-function goTo(p: number) {
-    if (p < 1 || p > lastPage.value) return;
-    page.value = p;
-    getProducts();
-}
-
-const pages = computed(() => {
-    const arr: number[] = [];
-    for (let p = 1; p <= lastPage.value; p++) arr.push(p);
-    return arr;
-});
 
 onMounted(() => {
-    getProducts();
+    getProducts(1);
 });
 </script>
 
@@ -99,19 +88,5 @@ onMounted(() => {
         </TableBody>
     </Table>
 
-    <div class="flex items-center w-[100%] justify-center mt-[20px]" v-if="lastPage > 1">
-        <div class="flex items-center space-x-2">
-            <button class="btn" :disabled="page === 1 || loading" @click="goTo(page - 1)">
-                Prev
-            </button>
-
-            <button v-for="p in pages" :key="p" :class="['btn', { 'btn-primary': p === page }]" @click="goTo(p)">
-                {{ p }}
-            </button>
-
-            <button class="btn" :disabled="page === lastPage || loading" @click="goTo(page + 1)">
-                Next
-            </button>
-        </div>
-    </div>
+    <Pagination :links="links" :loading="loading" @change="getProducts"></Pagination>
 </template>

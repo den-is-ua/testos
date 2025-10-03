@@ -3,7 +3,7 @@ The main goal of this project is expirience with major technology of web applica
 Main business logic of this project is: 
 User can import `csv` file to fill/update products base. AI assistent parse file and setup propriate configs to import data by right structure from file.
 User has small dashboard which display table of products and form to upload import file.
-
+![Image](.documentation/dashboard.png)
 
 
 # Install
@@ -44,3 +44,6 @@ Go to browser by url `admin.loc` or `127.0.0.1` if you didnt setup hosts
 # Postman api collection
 Download the dump file and import to Postman
 [File](.postman/TestOS.postman_collection.json)
+
+# Import file to test/debug
+[Downlod](.testdata/products_1000.csv) csv file

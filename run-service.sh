@@ -1,8 +1,6 @@
 #!/bin/bash
 docker compose up -d
 
-docker exec -d admin-app npm run dev
-
 echo "Waiting for running RabbitMQ"
 sleep 30
 

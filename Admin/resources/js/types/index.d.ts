@@ -60,3 +60,9 @@ export interface ProductMeta {
     last_page: number;
     per_page: number;
 }
+
+export interface PaginationItem {
+    label: string;
+    page: ?number
+    active: boolean
+}
