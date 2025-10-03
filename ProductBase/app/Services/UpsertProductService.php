@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 
-
-
-class UpsertProductService  
+class UpsertProductService
 {
     public static function upsert(array $products)
     {
         $skus = collect($products)->pluck('sku')->all();
-        $existingSkus = \App\Models\Product::query()
+        $existingSkus = Product::query()
             ->whereIn('sku', $skus)
             ->pluck('sku')
             ->all();
@@ -26,19 +25,19 @@ class UpsertProductService
 
         $rows = collect($products)->map(function ($p) use ($now) {
             return [
-                'sku'         => $p['sku'],
-                'name'        => $p['name'],
-                'price'       => $p['price'],
-                'category'    => $p['category'] ?? null,
+                'sku' => $p['sku'],
+                'name' => $p['name'],
+                'price' => $p['price'],
+                'category' => $p['category'] ?? null,
                 'description' => $p['description'] ?? null,
-                'images'      => array_key_exists('images', $p) ? json_encode($p['images'] ?? []) : null,
-                'updated_at'  => $now,
+                'images' => array_key_exists('images', $p) ? json_encode($p['images'] ?? []) : null,
+                'updated_at' => $now,
             ];
         });
 
         DB::transaction(function () use ($rows) {
             foreach ($rows->chunk(1000) as $chunk) {
-                \App\Models\Product::query()->upsert(
+                Product::query()->upsert(
                     $chunk->all(),
                     ['sku'],
                     ['name', 'price', 'category', 'description', 'images', 'updated_at']
@@ -49,7 +48,7 @@ class UpsertProductService
         return [
             'updatedCount' => $updatedCount,
             'createdCount' => $createdCount,
-            'total'        => count($skus)
+            'total' => count($skus),
         ];
     }
 }

@@ -2,15 +2,14 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\WithFaker;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Tests\TestCase;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class ProductApiTest extends TestCase
 {
-    use WithFaker, RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     protected function setUp(): void
     {
@@ -36,8 +35,8 @@ class ProductApiTest extends TestCase
         $response = $this->postJson('/api/products', $productData);
 
         $response
-            ->assertCreated()                         
-            ->assertJson(['success' => true])        
+            ->assertCreated()
+            ->assertJson(['success' => true])
             ->assertJsonPath('data.name', $productData['name']);
 
         $this->assertDatabaseHas('products', ['sku' => $productData['sku']]);
@@ -51,7 +50,7 @@ class ProductApiTest extends TestCase
         $response = $this->getJson('/api/products');
 
         $response->assertStatus(200)
-                 ->assertJsonCount(3, 'data');
+            ->assertJsonCount(3, 'data');
     }
 
     /** @test */
@@ -62,7 +61,7 @@ class ProductApiTest extends TestCase
         $response = $this->getJson('/api/products/' . $product->id);
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['name' => $product->name]);
+            ->assertJsonFragment(['name' => $product->name]);
     }
 
     /** @test */
@@ -84,7 +83,7 @@ class ProductApiTest extends TestCase
         $response = $this->putJson('/api/products/' . $product->id, $updatedData);
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['name' => 'Updated Product Name', 'price' => 199.99]);
+            ->assertJsonFragment(['name' => 'Updated Product Name', 'price' => 199.99]);
 
         $this->assertDatabaseHas('products', ['id' => $product->id, 'name' => 'Updated Product Name', 'price' => 199.99]);
     }
@@ -109,7 +108,7 @@ class ProductApiTest extends TestCase
         $response = $this->deleteJson('/api/products/' . $product->id);
 
         $response->assertStatus(200)
-                 ->assertJson(['success' => true]);
+            ->assertJson(['success' => true]);
 
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }
@@ -127,7 +126,7 @@ class ProductApiTest extends TestCase
         $response = $this->postJson('/api/products');
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name', 'price', 'sku']);
+            ->assertJsonValidationErrors(['name', 'price', 'sku']);
     }
 
     /** @test */
@@ -142,7 +141,7 @@ class ProductApiTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name', 'price']);
+            ->assertJsonValidationErrors(['name', 'price']);
     }
 
     /** @test */
@@ -176,7 +175,7 @@ class ProductApiTest extends TestCase
                 'total' => 2,
                 'createdCount' => 2,
                 'updatedCount' => 0,
-            ]
+            ],
         ]);
 
         // Assert that products are in the database
@@ -222,7 +221,7 @@ class ProductApiTest extends TestCase
                 'total' => 2,
                 'createdCount' => 0,
                 'updatedCount' => 2,
-            ]
+            ],
         ]);
 
         // Assert that products are updated in the database
@@ -264,7 +263,7 @@ class ProductApiTest extends TestCase
                 'total' => 2,
                 'createdCount' => 1,
                 'updatedCount' => 1,
-            ]
+            ],
         ]);
 
         // Assert that the existing product is updated

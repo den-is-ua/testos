@@ -8,22 +8,19 @@ use Illuminate\Support\Facades\DB;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-
-
-class AMQSender  
+class AMQSender
 {
     const CONFIRM_IMPORT = 'import_confirmations';
-
 
     private AMQPStreamConnection $AMQPStreamConnection;
 
     public function __construct()
     {
         $this->AMQPStreamConnection = new AMQPStreamConnection(
-            env('RABBITMQ_HOST'), 
-            env("RABBITMQ_PORT"), 
-            env('RABBITMQ_USER'), 
-            env('RABBITMQ_PASSWORD')
+            config('queue.connections.rabbitmq.hosts.0.host'),
+            config('queue.connections.rabbitmq.hosts.0.port'),
+            config('queue.connections.rabbitmq.hosts.0.user'),
+            config('queue.connections.rabbitmq.hosts.0.password')
         );
     }
 
@@ -35,17 +32,16 @@ class AMQSender
     public function sendConfirmImport(int $importId)
     {
         $connection = $this->AMQPStreamConnection;
-        DB::afterCommit(function() use ($connection,  $importId) {
+        DB::afterCommit(function () use ($connection, $importId) {
             $channel = $connection->channel();
             $channel->queue_declare(AMQSender::CONFIRM_IMPORT, false, true, false, false);
-
 
             $messageBody = json_encode([
                 'import_id' => $importId,
             ]);
 
             $message = new AMQPMessage($messageBody, [
-                'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT // Make message durable
+                'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT, // Make message durable
             ]);
 
             $channel->basic_publish($message, '', AMQSender::CONFIRM_IMPORT);

@@ -7,24 +7,24 @@ use App\Services\UpsertProductService;
 use Illuminate\Console\Command;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 class AMQRecieveProducts extends Command
 {
     protected $signature = 'amq:recieve-products';
 
-
     public function handle(AMQSender $AMQSender)
     {
-        $host  = env('RABBITMQ_HOST');
-        $port  = (int) env('RABBITMQ_PORT');
-        $user  = env('RABBITMQ_USER');
-        $pass  = env('RABBITMQ_PASSWORD');
+        $host = config('queue.connections.rabbitmq.hosts.0.host');
+        $port = config('queue.connections.rabbitmq.hosts.0.port');
+        $user = config('queue.connections.rabbitmq.hosts.0.user');
+        $pass = config('queue.connections.rabbitmq.hosts.0.password');
         $vhost = '/';
 
         $connection = new AMQPStreamConnection($host, $port, $user, $pass, $vhost);
-        $channel    = $connection->channel();
+        $channel = $connection->channel();
 
-        $queue      = 'imports';
+        $queue = 'imports';
 
         $channel->queue_declare($queue, false, true, false, false);
 
@@ -37,14 +37,14 @@ class AMQRecieveProducts extends Command
 
                 // (optional) validate schema/version
                 validator($data, [
-                    'import_id'            => 'required|integer',
-                    'products'            => 'required|array',
-                    'products.*.name'     => 'required|string',
-                    'products.*.sku'      => 'required|string',
-                    'products.*.price'    => 'required|numeric',
+                    'import_id' => 'required|integer',
+                    'products' => 'required|array',
+                    'products.*.name' => 'required|string',
+                    'products.*.sku' => 'required|string',
+                    'products.*.price' => 'required|numeric',
                     'products.*.category' => 'nullable|string',
                     'products.*.description' => 'nullable|string',
-                    'products.*.images'   => 'nullable|array',
+                    'products.*.images' => 'nullable|array',
                 ])->validate();
 
                 // Do your business logic here
@@ -54,7 +54,7 @@ class AMQRecieveProducts extends Command
                 $msg->ack();
 
                 $this->info('Data Upserted import_id: ' . $data['import_id']);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // requeue=false sends to DLX if configured; otherwise drops or keeps unacked
                 $this->error($e->getMessage());
                 $msg->reject(false);

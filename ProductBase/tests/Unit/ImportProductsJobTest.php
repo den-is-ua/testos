@@ -2,25 +2,27 @@
 
 namespace Tests\Unit;
 
+use App\Jobs\ConfirmImportJob;
+use App\Jobs\ImportProductsJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Illuminate\Support\Facades\Queue;
 use Mockery;
-use App\Jobs\ImportProductsJob;
-use App\Jobs\ConfirmImportJob;
+use Tests\TestCase;
 
 class ImportProductsJobTest extends TestCase
 {
     use RefreshDatabase;
 
-    
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         Mockery::close();
         parent::tearDown();
     }
 
-    public function test_calls_upsert_and_dispatches_confirmation(): void
+    /**
+     * @test
+     */
+    public function calls_upsert_and_dispatches_confirmation(): void
     {
         Queue::fake();
 

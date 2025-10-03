@@ -10,7 +10,6 @@ use App\Http\Resources\ProductCollection;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Services\UpsertProductService;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -28,17 +27,18 @@ class ProductController extends Controller
         $validatedData = $request->validated();
 
         $product = Product::create($validatedData);
+
         return response()->json([
-            'success' => true, 
-            'data' => new ProductResource($product)
+            'success' => true,
+            'data' => new ProductResource($product),
         ], 201);
     }
 
     public function show(Product $product)
     {
         return response()->json([
-            'success' => true, 
-            'data' => new ProductResource($product)
+            'success' => true,
+            'data' => new ProductResource($product),
         ]);
     }
 
@@ -46,15 +46,17 @@ class ProductController extends Controller
     {
         $validatedData = $request->validated();
         $product->update($validatedData);
+
         return response()->json([
-            'success' => true, 
-            'data' => new ProductResource($product)
+            'success' => true,
+            'data' => new ProductResource($product),
         ]);
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
+
         return response()->json(['success' => true]);
     }
 
@@ -66,7 +68,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => "Upsert completed",
+            'message' => 'Upsert completed',
             'data' => $upsertInfo,
         ], 200);
     }
