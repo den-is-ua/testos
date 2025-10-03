@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProductApiTest extends TestCase
@@ -20,7 +21,7 @@ class ProductApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_a_product()
     {
         $productData = [
@@ -42,7 +43,7 @@ class ProductApiTest extends TestCase
         $this->assertDatabaseHas('products', ['sku' => $productData['sku']]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_retrieve_a_list_of_products()
     {
         Product::factory()->count(3)->create();
@@ -53,7 +54,7 @@ class ProductApiTest extends TestCase
             ->assertJsonCount(3, 'data');
     }
 
-    /** @test */
+    #[Test]
     public function it_can_retrieve_a_single_product()
     {
         $product = Product::factory()->create();
@@ -64,14 +65,14 @@ class ProductApiTest extends TestCase
             ->assertJsonFragment(['name' => $product->name]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_if_product_not_found()
     {
         $response = $this->getJson('/api/products/999');
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_update_a_product()
     {
         $product = Product::factory()->create();
@@ -88,7 +89,7 @@ class ProductApiTest extends TestCase
         $this->assertDatabaseHas('products', ['id' => $product->id, 'name' => 'Updated Product Name', 'price' => 199.99]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_when_updating_non_existent_product()
     {
         $updatedData = [
@@ -100,7 +101,7 @@ class ProductApiTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_delete_a_product()
     {
         $product = Product::factory()->create();
@@ -113,14 +114,14 @@ class ProductApiTest extends TestCase
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_404_when_deleting_non_existent_product()
     {
         $response = $this->deleteJson('/api/products/999');
         $response->assertStatus(404);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_product_creation_data()
     {
         $response = $this->postJson('/api/products');
@@ -129,7 +130,7 @@ class ProductApiTest extends TestCase
             ->assertJsonValidationErrors(['name', 'price', 'sku']);
     }
 
-    /** @test */
+    #[Test]
     public function it_validates_product_update_data()
     {
         $product = Product::factory()->create();
@@ -144,7 +145,7 @@ class ProductApiTest extends TestCase
             ->assertJsonValidationErrors(['name', 'price']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_upsert_new_products()
     {
         $productsToUpsert = [
@@ -184,7 +185,7 @@ class ProductApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_can_upsert_existing_products()
     {
         // Create some initial products
@@ -230,7 +231,7 @@ class ProductApiTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function it_can_upsert_mixed_new_and_existing_products()
     {
         // Create some initial products
@@ -281,7 +282,7 @@ class ProductApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_to_upsert_with_missing_required_fields()
     {
         $productsToUpsert = [
@@ -306,7 +307,7 @@ class ProductApiTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_to_upsert_with_duplicate_skus_in_request()
     {
         $sku = $this->faker->unique()->ean13;
@@ -330,7 +331,7 @@ class ProductApiTest extends TestCase
         $response->assertJsonValidationErrors(['products.1.sku']);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_to_upsert_with_missing_products_key()
     {
         $response = $this->postJson('/api/products/upsert', []); // Missing 'products' key
