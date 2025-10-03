@@ -40,7 +40,7 @@ class CSVParserServiceTest extends TestCase
         $import->file_path = $relative;
 
         $service = new CSVParserService($import);
-        $service->setupSettings(3, 0, 1, 2, 3, 4, 5);
+        $service->setupSettings(3, 1, 2, 3, 4, 5, 6);
 
         $products = [];
         foreach ($service->parse() as $chunk) {

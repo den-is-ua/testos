@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UpsertProductService
 {
@@ -17,7 +18,6 @@ class UpsertProductService
             ->pluck('sku')
             ->all();
 
-        $existingSet = array_flip($existingSkus);
         $updatedCount = count($existingSkus);
         $createdCount = count($skus) - $updatedCount;
 

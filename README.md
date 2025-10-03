@@ -1,10 +1,34 @@
-# Install
+# About project
+The main goal of this project is expirience with major technology of web application like: `microservices`, `rabbitmq`, `pusher`, `postgres`, `AI assistent`, `vue`, `shadcn`
+Main business logic of this project is: 
+User can import `csv` file to fill/update products base. AI assistent parse file and setup propriate configs to import data by right structure from file.
+User has small dashboard which display table of products and form to upload import file.
 
+
+
+# Install
+### Deploy all services
 ```
 bash install-with-docker.sh
 ```
 
-Setup host
+### Setup AI agent
+Setup `GEMINI_API_KEY` in the `Import/.env` file
+[Get an api key](https://aistudio.google.com/app/apikey). Its free ;)
+
+### Setup pusher
+Setup varialbes in the `Admin/.env`.
+[Sign up and get access](https://pusher.com/) Its free also :)
+```bash
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_APP_CLUSTER=
+PUSHER_PORT=
+PUSHER_SCHEME=
+```
+
+### Optional setup hosts
 ```
 nano /etc/hosts
 
@@ -14,41 +38,9 @@ nano /etc/hosts
 127.0.0.1 admin.loc
 ```
 
-Run queues
-```
-docker exec -it import-app php artisan queue:work rabbitmq --queue=import_confirmations,default
-docker exec -it product-base-app php artisan queue:work rabbitmq --queue=imports
-```
-
-Run vite
-```
-docker exec admin-app npm run dev
-```
+### Open project and use
+Go to browser by url `admin.loc` or `127.0.0.1` if you didnt setup hosts
 
 # Postman api collection
 Download the dump file and import to Postman
 [File](.postman/TestOS.postman_collection.json)
-
-# ProductBase
-### Go under docker container
-```
-docker exec -it product-base-app bash
-```
-
-### Testing
-```
-docker exec -it product-base-app php artisan test
-```
-
-# Import
-Setup `GEMINI_API_KEY` in the `.env` file
-[Get an api key](https://aistudio.google.com/app/apikey)
-
-### Go under docker container
-```
-docker exec -it import-app bash
-```
-
-### Testing
-```
-docker exec -it import-app php artisan test

@@ -37,11 +37,11 @@ class ParseImportJobTest extends TestCase
         // set parser settings expected by CSVParserService
         $import->settings = [
             'startRow' => 1,
-            'nameColumnPosition' => 0,
-            'skuColumnPosition' => 1,
-            'priceColumnPosition' => 2,
-            'categoryColumnPosition' => 3,
-            'descriptionColumnPosition' => 4,
+            'nameColumnPosition' => 1,
+            'skuColumnPosition' => 2,
+            'priceColumnPosition' => 3,
+            'categoryColumnPosition' => 4,
+            'descriptionColumnPosition' => 5,
             'imagesColumnPosition' => null,
             'separator' => ',',
             'endclosure' => '"',

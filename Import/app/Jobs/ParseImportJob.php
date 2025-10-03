@@ -7,6 +7,7 @@ use App\Services\AMQSender;
 use App\Services\CSVParserService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 
 class ParseImportJob implements ShouldQueue
 {
@@ -28,6 +29,7 @@ class ParseImportJob implements ShouldQueue
         $import = Import::find($this->importId);
         $service = new CSVParserService($import);
 
+        Log::debug(__CLASS__ . __METHOD__ . '. Start parsing file id: ' . $this->importId);
         foreach ($service->parse() as $products) {
             if (config('app.env') != 'testing') {
                 $AMQSender->sendProducts($import->id, $products);
@@ -35,5 +37,6 @@ class ParseImportJob implements ShouldQueue
 
             $import->increment('total_iterations');
         }
+        Log::debug(__CLASS__ . __METHOD__ . '. Done parsing file id: ' . $this->importId);
     }
 }

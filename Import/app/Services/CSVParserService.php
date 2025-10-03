@@ -9,6 +9,7 @@ use App\Models\Import;
 use App\OV\ProductOV;
 use Exception;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CSVParserService implements ParserContract
 {
@@ -87,6 +88,7 @@ class CSVParserService implements ParserContract
         $escape = $settings[self::ESCAPE_SETTING_NAME];
         $chunkSize = 100;
 
+        Log::debug(__CLASS__ . __METHOD__ . '. Get part of data for parsing');
         try {
             while (($row = fgetcsv($handle, null, $separator, $endclousure, $escape)) !== false) {
                 $rowIndex++;
@@ -96,10 +98,11 @@ class CSVParserService implements ParserContract
                 }
 
                 $getValue = function ($pos) use ($row) {
-                    if ($pos === null || $pos === '') {
+                    if ($pos === null || $pos === '' || $pos < 1) {
                         return null;
                     }
-                    $pos = (int) $pos;
+
+                    $pos = (int)$pos - 1;
 
                     return array_key_exists($pos, $row) ? $row[$pos] : null;
                 };
