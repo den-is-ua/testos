@@ -6,9 +6,7 @@ namespace App\Contracts;
 
 use App\Models\Import;
 
-
-
-interface AISetupperSettingsContract 
+interface AISetupperSettingsContract
 {
     public function setupSettings(Import $import);
 }

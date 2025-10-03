@@ -7,24 +7,26 @@ namespace Tests\Unit;
 use App\Models\Import;
 use App\Services\CSVAISetupperSettingsService;
 use App\Services\CSVParserService;
-use App\Services\ImportService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class CSVAISetupperSettingsServiceTest extends TestCase
 {
-    public function test_setupSettings_calls_gemini_with_expected_parameters()
+    /**
+     * @test
+     */
+    public function setup_settings_calls_gemini_with_expected_parameters()
     {
         $path = Str::random();
-        
+
         $csv = [
             ['name_header', 'sku_header', 'price_header', 'category_header', 'description_header', 'images_header'],
             ['Product One', 'P1', '10.00', 'Cat A', 'Desc one', 'http://img1.jpg, http://img2.jpg'],
-            ['Product Two', 'P2', '20.00', 'Cat B', 'Desc two', 'http://img3.jpg;http://img4.jpg']
+            ['Product Two', 'P2', '20.00', 'Cat B', 'Desc two', 'http://img3.jpg;http://img4.jpg'],
         ];
 
-        $content = (function(array $rows, string $delimiter = ',', string $enclosure = '"', string $escape = '\\'): string {
+        $content = (function (array $rows, string $delimiter = ',', string $enclosure = '"', string $escape = '\\'): string {
             $h = fopen('php://temp', 'r+');
             foreach ($rows as $row) {
                 fputcsv($h, $row, $delimiter, $enclosure, $escape);
@@ -32,18 +34,19 @@ class CSVAISetupperSettingsServiceTest extends TestCase
             rewind($h);
             $out = stream_get_contents($h);
             fclose($h);
+
             return $out === false ? '' : $out;
         })($csv);
 
         Storage::put($path, $content);
 
-        $import = new Import();
+        $import = new Import;
         $import->file_path = $path;
         $import->file_name = 'Import.csv';
         $import->file_extension = 'csv';
         $import->hash_content = '1111';
 
-        $ai = new CSVAISetupperSettingsService();
+        $ai = new CSVAISetupperSettingsService;
         $ai->setupSettings($import);
 
         $this->assertEquals([
@@ -60,5 +63,5 @@ class CSVAISetupperSettingsServiceTest extends TestCase
         ], $import->settings);
 
         Storage::delete($path);
-    }   
+    }
 }

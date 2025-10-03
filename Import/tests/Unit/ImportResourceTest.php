@@ -2,15 +2,18 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
-use Illuminate\Http\Request;
 use App\Http\Resources\ImportResource;
+use Illuminate\Http\Request;
+use PHPUnit\Framework\TestCase;
 
 class ImportResourceTest extends TestCase
 {
-    public function test_progress_is_zero_in_default()
+    /**
+     * @test
+     */
+    public function progress_is_zero_in_default()
     {
-        $import = (object)[
+        $import = (object) [
             'id' => 2,
             'file_name' => 'file.csv',
             'confirmed_iterations' => 0,
@@ -24,9 +27,12 @@ class ImportResourceTest extends TestCase
         $this->assertSame(0, $array['progress']);
     }
 
-    public function test_progress_1_percent()
+    /**
+     * @test
+     */
+    public function progress_1_percent()
     {
-        $import = (object)[
+        $import = (object) [
             'id' => 3,
             'file_name' => 'file.csv',
             'confirmed_iterations' => 1,
@@ -37,12 +43,15 @@ class ImportResourceTest extends TestCase
         $resource = new ImportResource($import);
         $array = $resource->toArray(Request::create('/'));
 
-        $this->assertSame( 1, $array['progress']);
+        $this->assertSame(1, $array['progress']);
     }
 
-     public function test_progress_50_percent()
+    /**
+     * @test
+     */
+    public function progress_50_percent()
     {
-        $import = (object)[
+        $import = (object) [
             'id' => 3,
             'file_name' => 'file.csv',
             'confirmed_iterations' => 50,
@@ -53,12 +62,15 @@ class ImportResourceTest extends TestCase
         $resource = new ImportResource($import);
         $array = $resource->toArray(Request::create('/'));
 
-        $this->assertSame( 50, $array['progress']);
+        $this->assertSame(50, $array['progress']);
     }
 
-    public function test_progress_completed()
+    /**
+     * @test
+     */
+    public function progress_completed()
     {
-        $import = (object)[
+        $import = (object) [
             'id' => 4,
             'file_name' => 'done.csv',
             'confirmed_iterations' => 1,

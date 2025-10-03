@@ -85,9 +85,9 @@ return [
                 'global' => env('AMQP_QOS_GLOBAL', false),
             ],
 
-            /**
-             * Default Publish options
-             */
+        /**
+         * Default Publish options
+         */
             /*'publish' => [
                 'mandatory' => false,
                 'immediate' => false,
@@ -95,18 +95,18 @@ return [
                 'batch_count' => 500,
             ],*/
 
-            /**
-             * Default Bind Options
-             */
+        /**
+         * Default Bind Options
+         */
             /*'bind' => [
                 'no_wait' => false,
                 'arguments' => [],
                 'ticket' => null,
             ],*/
 
-            /**
-             * Default Consume Options
-             */
+        /**
+         * Default Consume Options
+         */
             /*'consume' => [
                 'allowed_methods' => null,
                 'non_blocking' => false,

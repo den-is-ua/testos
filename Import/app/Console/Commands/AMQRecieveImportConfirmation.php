@@ -7,24 +7,24 @@ use App\Services\AMQSender;
 use Illuminate\Console\Command;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 class AMQRecieveImportConfirmation extends Command
 {
     protected $signature = 'amq:recieve-import-confirmations';
 
-
     public function handle(AMQSender $AMQSender)
     {
-        $host  = env('RABBITMQ_HOST');
-        $port  = (int) env('RABBITMQ_PORT');
-        $user  = env('RABBITMQ_USER');
-        $pass  = env('RABBITMQ_PASSWORD');
+        $host = config('queue.connections.rabbitmq.hosts.0.host');
+        $port = config('queue.connections.rabbitmq.hosts.0.port');
+        $user = config('queue.connections.rabbitmq.hosts.0.user');
+        $pass = config('queue.connections.rabbitmq.hosts.0.password');
         $vhost = '/';
 
         $connection = new AMQPStreamConnection($host, $port, $user, $pass, $vhost);
-        $channel    = $connection->channel();
+        $channel = $connection->channel();
 
-        $queue      = 'import_confirmations';
+        $queue = 'import_confirmations';
 
         $channel->queue_declare($queue, false, true, false, false);
 
@@ -37,7 +37,7 @@ class AMQRecieveImportConfirmation extends Command
 
                 // (optional) validate schema/version
                 validator($data, [
-                    'import_id'            => 'required|integer',
+                    'import_id' => 'required|integer',
                 ])->validate();
 
                 $import = Import::query()->findOrFail($data['import_id']);
@@ -46,14 +46,14 @@ class AMQRecieveImportConfirmation extends Command
                     $import->completed_at = now();
                     $import->save();
                 }
-                
+
                 $import->refresh();
                 $AMQSender->sendImportProgress($import);
 
                 $msg->ack();
 
                 $this->info('Import updated: ' . $data['import_id']);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->error($e->getMessage());
                 $msg->reject(false);
             }

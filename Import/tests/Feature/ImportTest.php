@@ -3,19 +3,21 @@
 namespace Tests\Feature;
 
 use App\Jobs\SetupImportSettingsByAIJob;
-use Illuminate\Support\Facades\Queue;
-use Tests\TestCase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Services\ImportService;
 use App\Models\Import;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
 class ImportTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_store_endpoint_stores_file_and_creates_import()
+    /**
+     * @test
+     */
+    public function store_endpoint_stores_file_and_creates_import()
     {
         Storage::fake('local');
         Queue::fake();
@@ -40,7 +42,10 @@ class ImportTest extends TestCase
         ]);
     }
 
-    public function test_store_endpoint_rejects_duplicate_in_progress_hash()
+    /**
+     * @test
+     */
+    public function store_endpoint_rejects_duplicate_in_progress_hash()
     {
         Storage::fake('local');
         Queue::fake();
@@ -56,7 +61,7 @@ class ImportTest extends TestCase
             'file_path' => 'imports/' . $file->hashName(),
             'file_extension' => 'csv',
             'hash_content' => $hash,
-            'settings' => []
+            'settings' => [],
         ]);
 
         $response = $this->postJson('/api/imports', [

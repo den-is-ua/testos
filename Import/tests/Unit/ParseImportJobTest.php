@@ -2,22 +2,21 @@
 
 namespace Tests\Unit;
 
+use App\Jobs\ParseImportJob;
 use App\Services\AMQSender;
 use App\Services\ImportService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Mockery;
-use Mockery\MockInterface;
 use Tests\TestCase;
-use App\Models\Import;
-use App\Jobs\ParseImportJob;
-use App\Jobs\SendToProductsBaseJob;
-use Illuminate\Support\Facades\Queue;
 
 class ParseImportJobTest extends TestCase
 {
-    public function test_handles_and_dispatches_chunks_and_increments_total_iterations(): void
+    /**
+     * @test
+     */
+    public function handles_and_dispatches_chunks_and_increments_total_iterations(): void
     {
         Queue::fake();
 
@@ -51,16 +50,14 @@ class ParseImportJobTest extends TestCase
         $import->save();
 
         $job = new ParseImportJob($import->id);
-        $job->handle(new AMQSender());
-
-
+        $job->handle(new AMQSender);
 
         $import->refresh();
         $this->assertEquals(1, $import->total_iterations);
 
         Storage::delete([
             $path,
-            $import->file_path
+            $import->file_path,
         ]);
     }
 }

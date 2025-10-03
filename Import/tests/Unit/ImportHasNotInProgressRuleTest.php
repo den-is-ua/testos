@@ -2,16 +2,19 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Illuminate\Http\UploadedFile;
 use App\Models\Import;
 use App\Rules\ImportHasNotInProgress;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Tests\TestCase;
 
 class ImportHasNotInProgressRuleTest extends TestCase
 {
-    public function test_allows_upload_when_allow_upload_duplicated_file_is_true(): void
+    /**
+     * @test
+     */
+    public function allows_upload_when_allow_upload_duplicated_file_is_true(): void
     {
         // prepare CSV content
         $csv = "name,sku\nProduct A,SKU1\n";
@@ -38,7 +41,7 @@ class ImportHasNotInProgressRuleTest extends TestCase
         // enable the config flag that allows duplicated uploads
         config(['app.allow_upload_duplicated_file' => true]);
 
-        $rule = new ImportHasNotInProgress();
+        $rule = new ImportHasNotInProgress;
 
         $this->assertTrue($rule->passes('file', $file));
 

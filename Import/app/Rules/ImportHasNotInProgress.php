@@ -2,8 +2,8 @@
 
 namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
 use App\Models\Import;
+use Illuminate\Contracts\Validation\Rule;
 
 class ImportHasNotInProgress implements Rule
 {
@@ -20,7 +20,7 @@ class ImportHasNotInProgress implements Rule
         $realPath = $value->getRealPath();
         $hash = hash_file('sha256', $realPath);
 
-        return !Import::where('hash_content', $hash)->whereNull('completed_at')->exists();
+        return ! Import::where('hash_content', $hash)->whereNull('completed_at')->exists();
     }
 
     public function message(): string

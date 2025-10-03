@@ -8,13 +8,10 @@ use App\Models\Import;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-
-
-class ImportService  
+class ImportService
 {
     private ParserContract $parser;
     private AISetupperSettingsContract $AISetupperSettings;
-
 
     public function __construct(private Import $import)
     {
@@ -32,7 +29,7 @@ class ImportService
             'file_name' => $file->getClientOriginalName(),
             'file_path' => $path,
             'file_extension' => substr($file->getClientOriginalExtension() ?? '', 0, 4),
-            'hash_content' => $hash
+            'hash_content' => $hash,
         ]);
     }
 
@@ -49,14 +46,14 @@ class ImportService
     private function parserMap(): ParserContract
     {
         return [
-            'csv' => new CSVParserService($this->import)
+            'csv' => new CSVParserService($this->import),
         ][$this->import->file_extension];
     }
 
     private function AISetupperSettingsMap(): AISetupperSettingsContract
     {
         return [
-            'csv' => new CSVAISetupperSettingsService()
+            'csv' => new CSVAISetupperSettingsService,
         ][$this->import->file_extension];
     }
 }

@@ -123,6 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'allow_upload_duplicated_file' => env('ALLOW_UPLOAD_DUPLICATED_FILE', false)
+    'allow_upload_duplicated_file' => env('ALLOW_UPLOAD_DUPLICATED_FILE', false),
 
 ];

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\ImportHasNotInProgress;
+use Illuminate\Foundation\Http\FormRequest;
 
 class StoreImportRequest extends FormRequest
 {
@@ -20,7 +20,7 @@ class StoreImportRequest extends FormRequest
                 'required',
                 'file',
                 'max:10240',
-                new ImportHasNotInProgress(),
+                new ImportHasNotInProgress,
             ],
         ];
     }

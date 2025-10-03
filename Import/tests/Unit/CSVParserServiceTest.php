@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\Models\Import;
 use App\OV\ProductOV;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Services\CSVParserService;
 use Illuminate\Support\Facades\Storage;
 use Pest\Support\Str;
 use Tests\TestCase;
-use App\Services\CSVParserService;
-use App\Models\Import;
 
 class CSVParserServiceTest extends TestCase
 {
-    public function test_parse_reads_csv_and_splits_images_and_respects_start_row()
+    /**
+     * @test
+     */
+    public function parse_reads_csv_and_splits_images_and_respects_start_row()
     {
         $relative = Str::random() . '.csv';
         $fullPath = Storage::path($relative);
@@ -22,7 +24,7 @@ class CSVParserServiceTest extends TestCase
         $csv = [
             ['name_header', 'sku_header', 'price_header', 'category_header', 'description_header', 'images_header'],
             ['Product One', 'P1', '10.00', 'Cat A', 'Desc one', 'http://img1.jpg, http://img2.jpg'],
-            ['Product Two', 'P2', '20.00', 'Cat B', 'Desc two', 'http://img3.jpg;http://img4.jpg']
+            ['Product Two', 'P2', '20.00', 'Cat B', 'Desc two', 'http://img3.jpg;http://img4.jpg'],
         ];
 
         $fh = fopen($fullPath, 'w');
@@ -31,7 +33,7 @@ class CSVParserServiceTest extends TestCase
         }
         fclose($fh);
 
-        $import = new Import();
+        $import = new Import;
         $import->file_name = 'Import.csv';
         $import->file_extension = 'csv';
         $import->hash_content = '1111';
