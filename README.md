@@ -8,7 +8,7 @@ User has small dashboard which display table of products and form to upload impo
 
 # Install
 ### Deploy all services
-```
+```bash
 bash install-with-docker.sh
 ```
 
@@ -29,13 +29,18 @@ PUSHER_SCHEME=
 ```
 
 ### Optional setup hosts
-```
+```bash
 nano /etc/hosts
 
 # Insert
 # 127.0.0.1 product-base.loc
 # 127.0.0.1 import.loc
 127.0.0.1 admin.loc
+```
+
+### Run services
+```bash
+bash run-services.sh
 ```
 
 ### Open project and use
@@ -45,5 +50,15 @@ Go to browser by url `admin.loc` or `127.0.0.1` if you didnt setup hosts
 Download the dump file and import to Postman
 [File](.postman/TestOS.postman_collection.json)
 
-# Import file to test/debug
+# CSV Import file to test/debug
 [Downlod](.testdata/products_1000.csv) csv file
+
+# Userful commands
+```bash
+# Restart all services. Userfull for apply
+# codebase changes for queues and amqp listeners
+bash restart-services.sh
+
+# Stop all services
+bash stop-services.sh
+```
