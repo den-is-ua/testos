@@ -64,3 +64,10 @@ bash restart-services.sh
 # Stop all services
 bash stop-services.sh
 ```
+
+# Run tests
+```bash
+docker exec admin-app composer test
+docker exec import-app composer test
+docker exec product-base-app composer test
+```
