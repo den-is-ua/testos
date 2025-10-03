@@ -15,10 +15,10 @@ class AMQRecieveImportProgress extends Command
 
     public function handle()
     {
-        $host = config('reabbitmq.host');
-        $port = config('reabbitmq.port');
-        $user = config('reabbitmq.user');
-        $pass = config('reabbitmq.password');
+        $host = config('rebbitmq.host');
+        $port = config('rebbitmq.port');
+        $user = config('rebbitmq.user');
+        $pass = config('rebbitmq.password');
         $vhost = '/';
 
         $connection = new AMQPStreamConnection($host, $port, $user, $pass, $vhost);
@@ -35,6 +35,8 @@ class AMQRecieveImportProgress extends Command
             try {
                 $data = json_decode($msg->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
+                Log::debug(__CLASS__ . __METHOD__ . '. Recieved data', ['data.first_element' => reset($data)]);
+
                 // (optional) validate schema/version
                 validator($data, [
                     'id' => 'required|integer',
@@ -44,17 +46,17 @@ class AMQRecieveImportProgress extends Command
                 ])->validate();
 
                 $pusher = new Pusher(
-                    config('broadcasting.connection.pusher.key'),
-                    config('broadcasting.connection.pusher.secret'),
-                    config('broadcasting.connection.pusher.app_id'),
-                    ['cluster' => config('broadcasting.connection.pusher.options.cluster')]
+                    config('broadcasting.connections.pusher.key'),
+                    config('broadcasting.connections.pusher.secret'),
+                    config('broadcasting.connections.pusher.app_id'),
+                    ['cluster' => config('broadcasting.connections.pusher.options.cluster')]
                 );
 
                 $pusher->trigger('import-progress', 'updated-progress', $data);
 
                 $msg->ack();
 
-                Log::debug(__CLASS__ . __METHOD__, $data);
+                Log::debug(__CLASS__ . __METHOD__ . '. Acknowlaged importId ' . $data['id']);
                 $this->info('Progress recieved: ' . $data['progress']);
             } catch (Throwable $e) {
                 Log::error($e->getMessage(), $e->getTrace());

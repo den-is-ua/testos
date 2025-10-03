@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Import;
 use App\Services\AMQSender;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Throwable;
@@ -35,6 +36,8 @@ class AMQRecieveImportConfirmation extends Command
             try {
                 $data = json_decode($msg->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
+                Log::debug(__CLASS__ . __METHOD__ . '. Recieved data', ['data.first_element' => reset($data)]);
+
                 // (optional) validate schema/version
                 validator($data, [
                     'import_id' => 'required|integer',
@@ -52,6 +55,7 @@ class AMQRecieveImportConfirmation extends Command
 
                 $msg->ack();
 
+                Log::debug(__CLASS__ . __METHOD__ . '. Acknowlaged importId ' . $data['import_id']);
                 $this->info('Import updated: ' . $data['import_id']);
             } catch (Throwable $e) {
                 $this->error($e->getMessage());
