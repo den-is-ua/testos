@@ -24,7 +24,7 @@ class IndexProductRequest extends FormRequest
         return [
             'page' => ['numeric', 'nullable', 'min:1'],
             'per_page' => ['numeric', 'nullable', 'min:1'],
-            'filter' => ['string', 'nullable', 'max:10']
+            'filter' => ['string', 'nullable', 'max:10'],
         ];
     }
 }

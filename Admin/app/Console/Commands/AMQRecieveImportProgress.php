@@ -3,28 +3,28 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Log;
+use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Pusher\Pusher;
+use Throwable;
 
 class AMQRecieveImportProgress extends Command
 {
     protected $signature = 'amq:recieve-import-progress';
 
-
     public function handle()
     {
-        $host  = env('RABBITMQ_HOST');
-        $port  = (int) env('RABBITMQ_PORT');
-        $user  = env('RABBITMQ_USER');
-        $pass  = env('RABBITMQ_PASSWORD');
+        $host = config('reabbitmq.host');
+        $port = config('reabbitmq.port');
+        $user = config('reabbitmq.user');
+        $pass = config('reabbitmq.password');
         $vhost = '/';
 
         $connection = new AMQPStreamConnection($host, $port, $user, $pass, $vhost);
-        $channel    = $connection->channel();
+        $channel = $connection->channel();
 
-        $queue      = 'import_progress';
+        $queue = 'import_progress';
 
         $channel->queue_declare($queue, false, true, false, false);
 
@@ -40,23 +40,23 @@ class AMQRecieveImportProgress extends Command
                     'id' => 'required|integer',
                     'file_name' => 'required|string',
                     'progress' => 'required|integer',
-                    'completed' => 'required|boolean'
+                    'completed' => 'required|boolean',
                 ])->validate();
 
                 $pusher = new Pusher(
-                    env("PUSHER_APP_KEY"), 
-                    env("PUSHER_APP_SECRET"), 
-                    env("PUSHER_APP_ID"), 
-                    array('cluster' => env("PUSHER_APP_CLUSTER"))
+                    config('broadcasting.connection.pusher.key'),
+                    config('broadcasting.connection.pusher.secret'),
+                    config('broadcasting.connection.pusher.app_id'),
+                    ['cluster' => config('broadcasting.connection.pusher.options.cluster')]
                 );
 
                 $pusher->trigger('import-progress', 'updated-progress', $data);
 
                 $msg->ack();
-                
+
                 Log::debug(__CLASS__ . __METHOD__, $data);
                 $this->info('Progress recieved: ' . $data['progress']);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 Log::error($e->getMessage(), $e->getTrace());
                 $this->error($e->getMessage());
                 $msg->reject(false);

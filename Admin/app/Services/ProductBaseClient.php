@@ -9,9 +9,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-
-
-class ProductBaseClient  
+class ProductBaseClient
 {
     public function __construct(private string $host, private string $key)
     {
@@ -32,18 +30,18 @@ class ProductBaseClient
         $response = Http::withToken($this->key)->get($this->host . 'api/products', [
             'page' => $page,
             'per_page' => $perPage,
-            'filter' => $filter
+            'filter' => $filter,
         ]);
 
         $this->throwExceptionIfResponseFailed(__METHOD__, $response);
-        
+
         return $response;
     }
 
     private function throwExceptionIfResponseFailed(string $method, Response $response)
     {
         if ($response->serverError()) {
-            throw new Exception(__CLASS__ . $method .  ' Response failed: ' . json_encode($response));
+            throw new Exception(__CLASS__ . $method . ' Response failed: ' . json_encode($response));
         }
     }
 }

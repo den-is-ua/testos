@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-
-
-class ImportClient  
+class ImportClient
 {
     public function __construct(private string $host, private string $key)
     {
@@ -43,14 +41,13 @@ class ImportClient
 
         Log::debug(__CLASS__ . __METHOD__, [
             'status' => $response->status(),
-            'body'   => $response->body(),
+            'body' => $response->body(),
         ]);
 
         $this->throwExceptionIfResponseFailed(__METHOD__, $response);
 
         return $response;
     }
-
 
     public function healthcheck()
     {
@@ -60,7 +57,7 @@ class ImportClient
     private function throwExceptionIfResponseFailed(string $method, Response $response)
     {
         if ($response->serverError()) {
-            throw new Exception(__CLASS__ . $method .  ' Response failed: ' . json_encode($response));
+            throw new Exception(__CLASS__ . $method . ' Response failed: ' . json_encode($response));
         }
     }
 }

@@ -17,7 +17,7 @@ class ImportUploadRequest extends FormRequest
             'file' => [
                 'required',
                 'file',
-                'max:10240'
+                'max:10240',
             ],
         ];
     }

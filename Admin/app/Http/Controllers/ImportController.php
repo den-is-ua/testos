@@ -6,11 +6,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ImportUploadRequest;
 use App\Services\ImportClient;
-use Exception;
-use Illuminate\Support\Facades\Validator;
-use Log;
-
-
 
 class ImportController extends Controller
 {
@@ -21,13 +16,13 @@ class ImportController extends Controller
         if ($response->getStatusCode() == 422) {
             return response()->json([
                 'message' => $response->json('message'),
-                'errors' => $response->json('errors')
+                'errors' => $response->json('errors'),
             ], 422);
         }
 
         return response()->json([
             'message' => 'Import was uploaded',
-            'data' => $response->json('data')
+            'data' => $response->json('data'),
         ]);
     }
 }
