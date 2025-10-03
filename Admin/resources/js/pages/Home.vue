@@ -41,7 +41,7 @@ const formModalOpened = ref<boolean>(false)
                     <DialogHeader>
                         <DialogTitle>Import file</DialogTitle>
                         <DialogDescription>
-                            Choose a CSV or Excel file and click Upload.
+                            Choose a CSV click Upload.
                         </DialogDescription>
                     </DialogHeader>
 

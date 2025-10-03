@@ -62,9 +62,9 @@ async function submit() {
                 <FormLabel>File</FormLabel>
                 <FormControl>
                     <!-- Bind the picked File object to the field -->
-                    <Input type="file" accept=".csv,.xls,.xlsx" name="file" @change="(e: Event) => file = (e.target as HTMLInputElement).files?.[0] ?? null" />
+                    <Input type="file" accept=".csv" name="file" @change="(e: Event) => file = (e.target as HTMLInputElement).files?.[0] ?? null" />
                 </FormControl>
-                <FormDescription>Allowed: CSV, XLS, XLSX. Max 10MB.</FormDescription>
+                <FormDescription>Allowed: CSV. Max 10MB.</FormDescription>
                 <FormMessage />
             </FormItem>
         </FormField>

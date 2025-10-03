@@ -18,6 +18,7 @@ class ImportUploadRequest extends FormRequest
                 'required',
                 'file',
                 'max:10240',
+                'mimes:csv,txt'
             ],
         ];
     }
