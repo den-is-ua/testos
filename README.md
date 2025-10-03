@@ -5,6 +5,8 @@ User can import `csv` file to fill/update products base. AI assistent parse file
 User has small dashboard which display table of products and form to upload import file.
 ![Image](.documentation/dashboard.png)
 
+### Business logic diagram
+![Image](.documentation/diagram.jpg)
 
 # Install
 ### Deploy all services
@@ -53,7 +55,7 @@ Download the dump file and import to Postman
 # CSV Import file to test/debug
 [Downlod](.testdata/products_1000.csv) csv file
 
-# Userful commands
+# Useful commands
 ```bash
 # Restart all services. Userfull for apply
 # codebase changes for queues and amqp listeners
