@@ -20,7 +20,7 @@ class ProductBaseClient
         $this->host = Str::finish($host, '/');
     }
 
-    public static function autoapplyConfigs()
+    public static function autoApplyConfigs()
     {
         return new self(config('clients.product_base_host'), config('clients.product_base_key'));
     }

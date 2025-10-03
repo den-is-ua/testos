@@ -9,7 +9,7 @@ class ProductController extends Controller
 {
     public function index(IndexProductRequest $reqest)
     {
-        $response = ProductBaseClient::autoapplyConfigs()->getProducts(
+        $response = ProductBaseClient::autoApplyConfigs()->getProducts(
             $reqest->get('page', 1),
             $reqest->get('per_page', 1),
             $reqest->get('filter', '')
