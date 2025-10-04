@@ -1,25 +1,28 @@
 # About project
-The main goal of this project is expirience with major technology of web application like: `microservices`, `rabbitmq`, `pusher`, `postgres`, `AI assistent`, `vue`, `shadcn`
-Main business logic of this project is: 
-User can import `csv` file to fill/update products base. AI assistent parse file and setup propriate configs to import data by right structure from file.
-User has small dashboard which display table of products and form to upload import file.
+The main goal of this project is to gain experience with major web application technologies such as `microservices`, `RabbitMQ`, `Pusher`, `PostgreSQL`, `AI assistant`, `Vue`, and `Shadcn`.
+
+The core business logic of the project is as follows:  
+A user can import a `CSV` file to fill or update the product database.  
+An AI assistant analyzes the file and automatically configures the correct import settings based on the file’s structure.  
+The user has a simple dashboard displaying a product table and a form to upload import files.
+
 ![Image](.documentation/dashboard.png)
 
 ### Business logic diagram
 ![Image](.documentation/diagram.jpg)
 
-# Install
+# Installation
 ### Deploy all services
 ```bash
 bash install-with-docker.sh
 ```
 
-### Setup AI agent
-Setup `GEMINI_API_KEY` in the `Import/.env` file
+### Setup the AI agent
+Add your `GEMINI_API_KEY` to the `Import/.env` file
 [Get an api key](https://aistudio.google.com/app/apikey). Its free ;)
 
 ### Setup pusher
-Setup varialbes in the `Admin/.env`.
+Configure the following variables in `Admin/.env`.
 [Sign up and get access](https://pusher.com/) Its free also :)
 ```bash
 PUSHER_APP_ID=
@@ -30,7 +33,7 @@ PUSHER_PORT=
 PUSHER_SCHEME=
 ```
 
-### Optional setup hosts
+### Optional: setup hosts
 ```bash
 nano /etc/hosts
 
@@ -46,19 +49,20 @@ bash run-services.sh
 ```
 
 ### Open project and use
-Go to browser by url `admin.loc` or `127.0.0.1` if you didnt setup hosts
+Go to your browser and visit `admin.loc` or `127.0.0.1` if you didnt setup hosts
 
 # Postman api collection
-Download the dump file and import to Postman
+Download the collection file and import it into Postman:
 [File](.postman/TestOS.postman_collection.json)
 
-# CSV Import file to test/debug
+# CSV Import file for testing/debugging
+Download a test CSV file here:
 [Downlod](.testdata/products_1000.csv) csv file
 
 # Useful commands
 ```bash
-# Restart all services. Userfull for apply
-# codebase changes for queues and amqp listeners
+# Restart all services (useful for applying
+# codebase changes related to queues and AMQP listeners)
 bash restart-services.sh
 
 # Stop all services
