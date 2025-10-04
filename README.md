@@ -75,3 +75,8 @@ docker exec admin-app composer test
 docker exec import-app composer test
 docker exec product-base-app composer test
 ```
+
+# TODO
+Extra goals
+[ ] Add grafana for collection microservices logs
+[ ] Add profiler to monitoring resources
