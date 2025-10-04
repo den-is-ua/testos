@@ -78,5 +78,5 @@ docker exec product-base-app composer test
 
 # TODO
 Extra goals
-[ ] Add grafana for collection microservices logs
-[ ] Add profiler to monitoring resources
+- [ ] Add Grafana for collecting microservice logs  
+- [ ] Add a profiler for monitoring resource usage
